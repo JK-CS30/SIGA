@@ -1,0 +1,265 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    display:flex;
+    min-height:100vh;
+    background:linear-gradient(white, lightgray, white);
+}
+
+/* ==========================
+   SIDEBAR
+========================== */
+
+.sidebar{
+    width:260px;
+    height:100vh;
+    background:#07142c;
+    color:white;
+    position:fixed;
+    left:0;
+    top:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    text-align:center;
+    padding:25px;
+}
+
+.logo img{
+    width:90px;
+}
+
+.logo h2{
+    margin-top:10px;
+}
+
+.sidebar nav{
+    flex:1;
+}
+
+.sidebar nav a{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.sidebar nav a:hover{
+    background:#17335f;
+}
+
+.sidebar nav a.active{
+    background: #07142c;
+    color: goldenrod;
+    font-weight: bold;
+    border-left: 4px solid goldenrod;
+}
+
+.user-info{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:20px;
+    border-top:1px solid rgba(255,255,255,0.1);
+}
+
+.user-info i{
+    font-size:40px;
+}
+
+/* ==========================
+   CONTENIDO
+========================== */
+
+.content{
+    margin-left:260px;
+    width:calc(100% - 260px);
+    padding:30px;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.header h1{
+    color:#07142c;
+    margin-bottom:5px;
+}
+
+.header span{
+    color:#666;
+}
+
+.profile-top{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.profile-top i{
+    font-size:20px;
+    cursor:pointer;
+}
+
+.profile-top a{
+    text-decoration:none;
+    background:#2563eb;
+    color:white;
+    padding:10px 18px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:.3s;
+}
+
+.profile-top a:hover{
+    background:#1d4ed8;
+}
+
+/* ==========================
+   TABLA
+========================== */
+
+.table-container{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+    overflow-x:auto;
+}
+
+.tabla-equipos{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabla-equipos th{
+    background: linear-gradient(whitesmoke, lightgray) ;
+    color:black;
+    padding:15px;
+    text-align:left;
+}
+
+.tabla-equipos td{
+    padding:15px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.tabla-equipos tr:hover{
+    background:#f8fafc;
+}
+
+/* ==========================
+   BOTONES
+========================== */
+
+.btn-edit,
+.btn-delete{
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-size:16px;
+    margin-right:10px;
+}
+
+.btn-edit{
+    color:#2563eb;
+}
+
+.btn-delete{
+    color:#dc2626;
+}
+
+.btn-edit:hover,
+.btn-delete:hover{
+    transform:scale(1.1);
+}
+
+.btn-logout{
+    background:none;
+    border:none;
+    color:white;
+    cursor:pointer;
+    font-size:12px;
+    padding:15px;
+}
+
+.btn-logout i{
+    font-size: 20px;
+}
+
+.btn-logout:hover{
+    color:#ff6b6b;
+}
+
+
+
+/* Fondo oscuro */
+.modal{
+    display:none;
+    position:fixed;
+    z-index:999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+
+    justify-content:center;
+    align-items:center;
+}
+
+/* Caja del formulario */
+.modal-content{
+    background:white;
+    width:500px;
+    padding:30px;
+    border-radius:12px;
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.modal-content form{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.modal-content input{
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.modal-content button{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.close{
+    position:absolute;
+    top:10px;
+    right:15px;
+    font-size:25px;
+    cursor:pointer;
+}

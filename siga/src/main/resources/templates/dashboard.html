@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SIGA Dashboard</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="logo">
+        <img src="/img/logo.png" alt="SIGA">
+        <h2>SIGA</h2>
+    </div>
+
+    <nav>
+        <a class="active" href="/dashboard">
+            <i class="fas fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="/equipment">
+            <i class="fas fa-laptop"></i>
+            Equipos
+        </a>
+
+        <a href="/rental">
+            <i class="fas fa-file-signature"></i>
+            Alquileres
+        </a>
+
+        <a href="/maintenance">
+            <i class="fas fa-tools"></i>
+            Mantenimiento
+        </a>
+
+        <a href="#">
+            <i class="fas fa-satellite-dish"></i>
+            Monitoreo
+        </a>
+
+        <a href="#">
+            <i class="fas fa-chart-bar"></i>
+            Reportes
+        </a>
+
+        <a href="#">
+            <i class="fas fa-gear"></i>
+            Configuración
+        </a>
+    </nav>
+
+    <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <div>
+            <strong>Administrador</strong>
+            <p>Kevin Cusi</p>
+        </div>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-logout">
+                <i class="fas fa-right-from-bracket"></i>
+            </button>
+        </form>
+        
+    </div>
+
+</div>
+
+<!-- CONTENIDO -->
+<div class="content">
+
+    <div class="header">
+
+        <div>
+            <h1>Dashboard</h1>
+            <span>Resumen general del sistema</span>
+        </div>
+
+        <div class="profile-top">
+            <i class="fa-regular fa-bell"></i>
+
+            <div>
+                <strong>Administrador</strong>
+                <p>Kevin Cusi</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TARJETAS -->
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Equipos</h3>
+            <span th:text="${totalEquipments}"></span>
+        </div>
+
+        <div class="card">
+            <h3>Equipos en Uso</h3>
+            <span>5</span>
+        </div>
+
+        <div class="card">
+            <h3>Mantenimiento Pendiente</h3>
+            <span th:text="${openMaintenances}"></span>
+        </div>
+
+        <div class="card">
+            <h3>Alquileres Activos</h3>
+            <span th:text="${activeRentals}"></span>
+        </div>
+
+    </div>
+
+    <!-- SECCION CENTRAL -->
+    <div class="middle">
+
+        <div class="panel">
+            <h2>Estado de Equipos</h2>
+
+            <div class="chart-placeholder">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Próximos Mantenimientos</h2>
+
+            <ul>
+                <li>Montacarga TOYOTA GM-0003</li>
+                <li>Grupo Electrógeno GE-0001</li>
+                <li>Camioneta GC-0010</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- ACTIVIDAD -->
+    <div class="panel activity">
+
+        <h2>Actividad Reciente</h2>
+
+        <table>
+
+            <tr th:each="m : ${maintenances}">
+
+                <td th:text="${m.equipment.code}"></td>
+
+                <td th:text="${m.type}"></td>
+
+                <td th:text="${m.entryDate}"></td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

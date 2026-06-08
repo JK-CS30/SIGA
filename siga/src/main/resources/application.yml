@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: com.integrador1
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/siga_db
+    username: jkevin
+    password: Kevin_324
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  error:
+    include-binding-errors: always
+    include-message: always

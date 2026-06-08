@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SIGA Equipo</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/maintenance.css">
+</head>
+<body>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="logo">
+        <img src="/img/logo.png" alt="SIGA">
+        <h2>SIGA</h2>
+    </div>
+
+    <nav>
+        <a href="/dashboard">
+            <i class="fas fa-chart-line"></i>
+            Dashboard
+        </a>
+
+        <a href="/equipment">
+            <i class="fas fa-laptop"></i>
+            Equipos
+        </a>
+
+        <a class="active" href="/rental">
+            <i class="fas fa-file-signature"></i>
+            Alquileres
+        </a>
+
+        <a href="/maintenance">
+            <i class="fas fa-tools"></i>
+            Mantenimiento
+        </a>
+
+        <a href="#">
+            <i class="fas fa-satellite-dish"></i>
+            Monitoreo
+        </a>
+
+        <a href="#">
+            <i class="fas fa-chart-bar"></i>
+            Reportes
+        </a>
+
+        <a href="#">
+            <i class="fas fa-gear"></i>
+            Configuración
+        </a>
+    </nav>
+
+    <div class="user-info">
+        <i class="fas fa-user-circle"></i>
+        <div>
+            <strong>Administrador</strong>
+            <p>Kevin Cusi</p>
+        </div>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn-logout">
+                <i class="fas fa-right-from-bracket"></i>
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- CONTENIDO -->
+<div class="content">
+
+    <div class="header">
+
+        <div>
+            <h1>Alquileres</h1>
+            <span>Gestión de alquileres de equipos</span>
+        </div>
+
+        <div class="profile-top">
+            <i class="fa-regular fa-bell"></i>
+
+            <nav>
+                <button type="button" class="btn-add" onclick="abrirModal()">
+                    <i class="fas fa-plus"></i>
+                    Añadir Alquiler
+                </button>
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- MODAL -->
+    <div id="modalRental" class="modal">
+
+        <div class="modal-content">
+
+            <span class="close" onclick="cerrarModal()">&times;</span>
+
+            <h2>Registrar Equipo</h2>
+
+            <form id="formRental"
+                  action="/rental/save"
+                  method="post">
+
+                <select name="equipment.id" required>
+
+                    <option value="">
+                        Seleccione un equipo
+                    </option>
+
+                    <option th:each="equipment : ${equipments}"
+                            th:value="${equipment.id}"
+                            th:text="${equipment.code + ' - ' + equipment.brand}">
+                    </option>
+
+                </select>
+
+                <select name="operator.id" required>
+
+                    <option value="">
+                        Seleccione un operador
+                    </option>
+
+                    <option th:each="operator : ${operators}"
+                            th:value="${operator.id}"
+                            th:text="${operator.username}">
+                    </option>
+
+                </select>
+
+                <input type="text"
+                       name="customerName"
+                       placeholder="Nombre del Cliente"
+                       required>
+
+                <input type="text"
+                       name="customerRuc"
+                       placeholder="RUC / DNI"
+                       required>
+
+                <input type="number"
+                       step="0.01"
+                       name="hourlyRate"
+                       placeholder="Tarifa por Hora"
+                       required>
+
+                <input type="number"
+                       step="0.01"
+                       name="totalAmount"
+                       placeholder="Monto Total">
+
+                <input type="text"
+                       name="observaciones"
+                       placeholder="Observaciones">
+
+                <button type="submit">
+                    Guardar Alquiler
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- TABLA DE EQUIPOS -->
+    <div class="table-container">
+
+        <table class="tabla-equipos">
+
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Equipo</th>
+                <th>Cliente</th>
+                <th>RUC / DNI</th>
+                <th>Operador</th>
+                <th>Fecha</th>
+                <th>Tarifa Hora</th>
+                <th>Monto Total</th>
+                <th>Estado</th>
+                <th>Observaciones</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="rental : ${rentals}">
+
+                <td th:text="${rental.id}"></td>
+
+                <td th:text="${rental.equipment != null ? rental.equipment.code : 'Sin equipo'}"></td>
+
+                <td th:text="${rental.customerName}"></td>
+
+                <td th:text="${rental.customerRuc}"></td>
+
+                <td th:text="${rental.operator.username}"></td>
+
+                <td th:text="${rental.date}"></td>
+
+                <td th:text="${rental.hourlyRate}"></td>
+
+                <td th:text="${rental.totalAmount}"></td>
+
+                <td th:text="${rental.status}"></td>
+
+                <td th:text="${rental.observaciones}"></td>
+
+                <td>
+
+                    <form th:action="@{/rental/close/{id}(id=${rental.id})}"
+                          method="post"
+                          style="display:inline;">
+
+                        <button class="btn-edit"
+                                th:if="${rental.status == 'ACTIVO'}">
+                            Finalizar
+                        </button>
+
+                    </form>
+
+                    <button class="btn-delete"
+                            th:onclick="'eliminarRental(' + ${rental.id} + ')'">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+<script src="/js/rental.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+            linear-gradient(
+                    rgba(7,20,44,.85),
+                    rgba(7,20,44,.85)
+            ),
+            url('../img/login.png');
+
+    background-size:cover;
+    background-position:center;
+}
+
+section{
+    width:950px;
+    display:flex;
+    overflow:hidden;
+
+    border-radius:20px;
+
+    backdrop-filter:blur(25px);
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    box-shadow:0 10px 35px rgba(0,0,0,.35);
+}
+
+/* PANEL IZQUIERDO */
+
+.brand-panel{
+    width:40%;
+    background:#07142c;
+
+    color:white;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    padding:40px;
+}
+
+.brand-panel img{
+    width:120px;
+    margin-bottom:20px;
+}
+
+.brand-panel h2{
+    font-size:2rem;
+    margin-bottom:10px;
+    color:goldenrod;
+}
+
+.brand-panel p{
+    text-align:center;
+    line-height:1.6;
+    color:#ddd;
+}
+
+/* FORMULARIO */
+
+form{
+    width:60%;
+    padding:40px;
+}
+
+h1{
+    color:white;
+    text-align:center;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    display:block;
+    text-align:center;
+    color:#ddd;
+    margin-bottom:30px;
+}
+
+.inputbox{
+    position:relative;
+    margin-bottom:25px;
+
+    border-bottom:2px solid rgba(255,255,255,.4);
+}
+
+.inputbox input{
+    width:100%;
+    height:45px;
+
+    border:none;
+    outline:none;
+
+    background:transparent;
+
+    color:white;
+    font-size:1rem;
+
+    padding:0 40px 0 5px;
+}
+
+.inputbox label{
+    position:absolute;
+
+    left:5px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:white;
+
+    pointer-events:none;
+
+    transition:.3s;
+}
+
+.inputbox ion-icon{
+    position:absolute;
+
+    right:10px;
+    top:12px;
+
+    color:white;
+    font-size:20px;
+}
+
+.inputbox input:focus ~ label,
+.inputbox input:valid ~ label{
+    top:-8px;
+    font-size:.85rem;
+    color:goldenrod;
+}
+
+button{
+    width:100%;
+    height:45px;
+
+    border:none;
+    border-radius:10px;
+
+    background:goldenrod;
+
+    color:#07142c;
+
+    font-weight:600;
+    font-size:1rem;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    background:#d4a017;
+}
+
+.register{
+    margin-top:20px;
+    text-align:center;
+    color:white;
+}
+
+.register a{
+    color:goldenrod;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.register a:hover{
+    text-decoration:underline;
+}

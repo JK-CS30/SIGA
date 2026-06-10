@@ -84,4 +84,8 @@ public class RentalService {
 
         rentalRepository.save(rental);
     }
+
+    public long countActiveRentals() {
+        return rentalRepository.countByStatus("ACTIVO");
+    }
 }

@@ -65,4 +65,8 @@ public class MaintenanceService {
         return maintenanceRepository.save(existing);
     }
 
+    public long countOpenMaintenances() {
+        return maintenanceRepository.countByStatus("ABIERTO");
+    }
+
 }

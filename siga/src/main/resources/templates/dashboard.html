@@ -15,8 +15,7 @@
 <div class="sidebar">
 
     <div class="logo">
-        <img src="/img/logo.png" alt="SIGA">
-        <h2>SIGA</h2>
+        <img src="../img/logo_siga.png" alt="SIGA">
     </div>
 
     <nav>
@@ -40,7 +39,7 @@
             Mantenimiento
         </a>
 
-        <a href="#">
+        <a href="/monitoring">
             <i class="fas fa-satellite-dish"></i>
             Monitoreo
         </a>
@@ -49,18 +48,19 @@
             <i class="fas fa-chart-bar"></i>
             Reportes
         </a>
-
+    <!--
         <a href="#">
             <i class="fas fa-gear"></i>
             Configuración
         </a>
+        -->
     </nav>
 
     <div class="user-info">
         <i class="fas fa-user-circle"></i>
         <div>
             <strong>Administrador</strong>
-            <p>Kevin Cusi</p>
+            <p th:text="${#authentication.name}"></p>
         </div>
 
         <form th:action="@{/logout}" method="post">
@@ -83,15 +83,6 @@
             <span>Resumen general del sistema</span>
         </div>
 
-        <div class="profile-top">
-            <i class="fa-regular fa-bell"></i>
-
-            <div>
-                <strong>Administrador</strong>
-                <p>Kevin Cusi</p>
-            </div>
-        </div>
-
     </div>
 
     <!-- TARJETAS -->
@@ -104,7 +95,7 @@
 
         <div class="card">
             <h3>Equipos en Uso</h3>
-            <span>5</span>
+            <span th:text="${activeRentals}"></span>
         </div>
 
         <div class="card">
@@ -165,6 +156,6 @@
     </div>
 
 </div>
-
+<script src="/js/dashboard.js"></script>
 </body>
 </html>

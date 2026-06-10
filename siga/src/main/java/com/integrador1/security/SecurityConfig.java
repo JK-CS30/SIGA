@@ -63,6 +63,7 @@ public class SecurityConfig {
                                 "/equitment",
                                 "/rental",
                                 "/maintenance",
+                                "/monitoring",
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",

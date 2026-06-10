@@ -6,7 +6,7 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/css/maintenance.css">
+    <link rel="stylesheet" href="/css/monitoring.css">
 </head>
 <body>
 
@@ -15,8 +15,7 @@
 <div class="sidebar">
 
     <div class="logo">
-        <img src="/img/logo.png" alt="SIGA">
-        <h2>SIGA</h2>
+        <img src="../img/logo_siga.png" alt="SIGA">
     </div>
 
     <nav>
@@ -40,7 +39,7 @@
             Mantenimiento
         </a>
 
-        <a class="active" href="#">
+        <a class="active" href="/monitoring">
             <i class="fas fa-satellite-dish"></i>
             Monitoreo
         </a>
@@ -49,18 +48,19 @@
             <i class="fas fa-chart-bar"></i>
             Reportes
         </a>
-
+    <!--
         <a href="#">
             <i class="fas fa-gear"></i>
             Configuración
         </a>
+        -->
     </nav>
 
     <div class="user-info">
         <i class="fas fa-user-circle"></i>
         <div>
             <strong>Administrador</strong>
-            <p>Kevin Cusi</p>
+            <p th:text="${#authentication.name}"></p>
         </div>
 
         <form th:action="@{/logout}" method="post">
@@ -78,161 +78,99 @@
 <div class="content">
 
     <div class="header">
-
         <div>
-            <h1>Mantenimientos</h1>
-            <span>Gestión de mantenimiento</span>
+            <h1>Monitoreo</h1>
+            <span>Monitorización de equipos en tiempo real</span>
+        </div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+
+        <div class="card">
+            <i class="fas fa-laptop"></i>
+            <h3>Total de Equipos</h3>
+            <span th:text="${equipments.size()}"></span>
         </div>
 
-        <div class="profile-top">
-            <i class="fa-regular fa-bell"></i>
+        <div class="card">
+            <i class="fas fa-file-signature"></i>
+            <h3>Alquileres Activos</h3>
+            <span th:text="${rentals.size()}"></span>
+        </div>
 
-            <nav>
-                <button type="button" class="btn-add" onclick="abrirModal()">
-                    <i class="fas fa-plus"></i>
-                    Añadir Mantenimiento
-                </button>
-            </nav>
+        <div class="card">
+            <i class="fas fa-tools"></i>
+            <h3>Registro de Mantenimiento</h3>
+            <span th:text="${maintenances.size()}"></span>
         </div>
 
     </div>
 
-    <!-- MODAL -->
-    <div id="modalMaintenace" class="modal">
+    <!-- DOS PANELES -->
+    <div class="monitor-grid">
 
-        <div class="modal-content">
+        <!-- ALERTAS -->
+        <div class="panel">
+            <h2>Alerta Mantenimientos</h2>
 
-            <span class="close" onclick="cerrarModal()">&times;</span>
+            <table class="tabla-equipos">
+                <thead>
+                <tr>
+                    <th>Equipo</th>
+                    <th>Estado</th>
+                </tr>
+                </thead>
 
-            <h2>Registrar Equipo</h2>
+                <tbody>
+                <tr th:each="m : ${maintenances}"
+                    th:if="${m.status != null and #strings.toUpperCase(#strings.trim(m.status)) == 'ABIERTO'}">
 
-            <form id="formMaintenance"
-                  action="/maintenance/save"
-                  method="post">
+                    <!-- EQUIPO -->
+                    <td th:text="${m.equipment.code}"></td>
 
-                <select name="equipment.id" required>
+                    <!-- ESTADO -->
+                    <td>
+                        <span class="badge bg-success" th:text="${m.status}"></span>
+                    </td>
 
-                    <option value="">
-                        Seleccione un equipo
-                    </option>
-
-                    <option th:each="equipo : ${equipments}"
-                            th:value="${equipo.id}"
-                            th:text="${equipo.code + ' - ' + equipo.brand}">
-                    </option>
-
-                </select>
-
-                <select name="type" required>
-                    <option value="">Tipo de mantenimiento</option>
-                    <option value="PREVENTIVO">Preventivo</option>
-                    <option value="CORRECTIVO">Correctivo</option>
-                </select>
-
-                <input type="text"
-                       name="description"
-                       placeholder="Descripción"
-                       required>
-
-                <input type="text"
-                       name="hourMeter"
-                       placeholder="Horómetro">
-
-                <input type="number"
-                       step="0.01"
-                       name="cost"
-                       placeholder="Costo"
-                       required>
-
-                <input type="text"
-                       name="observations"
-                       placeholder="Observaciones"
-                       required>
-
-                <button type="submit">
-                    Guardar Mantenimiento
-                </button>
-
-            </form>
+                </tr>
+                </tbody>
+            </table>
 
         </div>
 
-    </div>
+        <!-- ALQUILERES -->
+        <div class="panel">
+            <h2>Registro de Alquileres</h2>
 
-    <!-- TABLA DE EQUIPOS -->
-    <div class="table-container">
+            <table class="tabla-equipos">
+                <thead>
+                <tr>
+                    <th>Equipo</th>
+                    <th>Cliente</th>
+                    <th>Estado</th>
+                </tr>
+                </thead>
 
-        <table class="tabla-equipos">
+                <tbody>
+                <tr th:each="r : ${rentals}"
+                    th:if="${r.status != null and r.status.toUpperCase() == 'ACTIVO'}">
 
-            <thead>
-            <tr>
-                <th>Código</th>
-                <th>Equipo</th>
-                <th>Fecha de Ingreso</th>
-                <th>Fecha de Salida</th>
-                <th>Estado</th>
-                <th>Tipo</th>
-                <th>Descripción</th>
-                <th>Horometro</th>
-                <th>Costo</th>
-                <th>Observaciones</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
+                    <td th:text="${r.equipment.code}"></td>
+                    <td th:text="${r.customerName}"></td>
 
-            <tbody>
+                    <td>
+                        <span class="badge bg-primary" th:text="${r.status}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
 
-            <tr th:each="maintenance : ${maintenances}">
-
-                <td th:text="${maintenance.id}"></td>
-
-                <td th:text="${maintenance.equipment.code}"></td>
-
-                <td th:text="${maintenance.entryDate}"></td>
-
-                <td th:text="${maintenance.exitDate}"></td>
-
-                <td th:text="${maintenance.status}"></td>
-
-                <td th:text="${maintenance.type}"></td>
-
-                <td th:text="${maintenance.description}"></td>
-
-                <td th:text="${maintenance.hourMeter}"></td>
-
-                <td th:text="${maintenance.cost}"></td>
-
-                <td th:text="${maintenance.observations}"></td>
-
-                <td>
-
-                    <form th:action="@{/maintenance/close/{id}(id=${maintenance.id})}"
-                          method="post"
-                          style="display:inline;">
-
-                        <button class="btn-edit"
-                                th:if="${maintenance.status == 'ABIERTO'}">
-                            Cerrar
-                        </button>
-
-                    </form>
-
-                    <button class="btn-delete"
-                            th:onclick="'eliminarMantenimiento(' + ${maintenance.id} + ')'">
-                        <i class="fas fa-trash"></i>
-                    </button>
-
-                </td>
-
-            </tr>
-
-            </tbody>
-
-        </table>
+        </div>
 
     </div>
 
 </div>
-<script src="/js/maintenance.js"></script>
 </body>
 </html>

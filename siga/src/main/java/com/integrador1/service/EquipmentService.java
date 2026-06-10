@@ -7,29 +7,29 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EquipmentService {
+        public class EquipmentService {
 
-    private final EquipmentRepository repository;
+            private final EquipmentRepository repository;
 
-    public EquipmentService(EquipmentRepository repository) {
-        this.repository = repository;
-    }
+            public EquipmentService(EquipmentRepository repository) {
+                this.repository = repository;
+            }
 
-    public Equipment registrarEquipo(Equipment equipment) {
+            public Equipment registrarEquipo(Equipment equipment) {
 
-        // Guarda primero para obtener el ID generado
-        Equipment savedEquipment = repository.save(equipment);
+                // Guarda primero para obtener el ID generado
+                Equipment savedEquipment = repository.save(equipment);
 
-        // Genera el código G-001, G-002, etc.
-        savedEquipment.setCode(
-                String.format("G-%03d", savedEquipment.getId())
-        );
+                // Genera el código G-001, G-002, etc.
+                savedEquipment.setCode(
+                        String.format("G-%03d", savedEquipment.getId())
+                );
 
-        return repository.save(savedEquipment);
-    }
+                return repository.save(savedEquipment);
+            }
 
-    public List<Equipment> listarEquipos() {
-        return repository.findAll();
+            public List<Equipment> listarEquipos() {
+                return repository.findAll();
     }
 
     public Equipment obtenerEquipo(Long id) {

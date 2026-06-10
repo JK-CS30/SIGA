@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/siga.iml" filepath="$PROJECT_DIR$/.idea/siga.iml" />
+      <module fileurl="file://$PROJECT_DIR$/siga/siga.iml" filepath="$PROJECT_DIR$/siga/siga.iml" />
     </modules>
   </component>
 </project>

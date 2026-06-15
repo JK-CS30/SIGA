@@ -1,6 +1,5 @@
 package com.integrador1.controller;
 
-import com.integrador1.model.MyAppUser;
 import com.integrador1.model.Rental;
 import com.integrador1.service.EquipmentService;
 import com.integrador1.service.MyAppUserService;

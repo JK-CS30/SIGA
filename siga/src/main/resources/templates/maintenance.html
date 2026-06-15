@@ -1,78 +1,12 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>SIGA Equipo</title>
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="/css/maintenance.css">
+    <div th:replace="~{fragments/layout :: head('SIGA Equipos')}"></div>
+    <link rel="stylesheet" href="/css/equipment.css">
 </head>
 <body>
 
-
-<!-- SIDEBAR -->
-<div class="sidebar">
-
-    <div class="logo">
-        <img src="../img/logo_siga.png" alt="SIGA">
-    </div>
-
-    <nav>
-        <a href="/dashboard">
-            <i class="fas fa-chart-line"></i>
-            Dashboard
-        </a>
-
-        <a href="/equipment">
-            <i class="fas fa-laptop"></i>
-            Equipos
-        </a>
-
-        <a href="/rental">
-            <i class="fas fa-file-signature"></i>
-            Alquileres
-        </a>
-
-        <a class="active" href="/maintenance">
-            <i class="fas fa-tools"></i>
-            Mantenimiento
-        </a>
-
-        <a href="/monitoring">
-            <i class="fas fa-satellite-dish"></i>
-            Monitoreo
-        </a>
-
-        <a href="#">
-            <i class="fas fa-chart-bar"></i>
-            Reportes
-        </a>
-    <!--
-        <a href="#">
-            <i class="fas fa-gear"></i>
-            Configuración
-        </a>
-        -->
-    </nav>
-
-    <div class="user-info">
-        <i class="fas fa-user-circle"></i>
-        <div>
-            <strong>Administrador</strong>
-            <p th:text="${#authentication.name}"></p>
-        </div>
-
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn-logout">
-                <i class="fas fa-right-from-bracket"></i>
-            </button>
-        </form>
-
-    </div>
-
-</div>
-
+<div th:replace="~{fragments/layout :: sidebar('maintenance')}"></div>
 
 <!-- CONTENIDO -->
 <div class="content">

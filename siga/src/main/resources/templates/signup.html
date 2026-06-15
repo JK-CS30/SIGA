@@ -5,29 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
 
-    <!-- Ionicons -->
     <script type="module"
             src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule
             src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
 <section>
 
     <div class="brand-panel">
-
-        <img src="/img/logo.png" alt="SIGA">
-
+        <img src="../img/logo_siga.png" alt="SIGA">
         <h2>SIGA</h2>
-
         <p>
             Sistema Integrado de Gestión de Alquileres
             y Mantenimiento de Equipos.
         </p>
-
     </div>
 
     <form action="/signup" method="post" id="signupForm">
@@ -44,7 +39,7 @@
                    id="username"
                    name="username"
                    required>
-            <label for="username">Usuario</label>
+            <label for="username">Nombre y Apellido</label>
         </div>
 
         <div class="inputbox">
@@ -73,6 +68,18 @@
             <label for="passwordConfirm">
                 Confirmar Contraseña
             </label>
+        </div>
+
+        <div class="inputbox">
+            <ion-icon name="id-card-outline"></ion-icon>
+            <select id="rol" name="rol" required>
+                <option value="" selected hidden></option> 
+                <option value="OWNER">Dueño</option>
+                <option value="USER">Usuario</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="MECHANIC">Mantenimiento / Técnico</option>
+            </select>
+            <label for="rol">Rol del Sistema</label>
         </div>
 
         <button type="submit">

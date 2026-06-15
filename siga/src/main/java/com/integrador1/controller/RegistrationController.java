@@ -2,7 +2,6 @@ package com.integrador1.controller;
 
 import com.integrador1.model.MyAppUser;
 import com.integrador1.repository.MyAppUserRepository;
-import com.integrador1.service.MyAppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

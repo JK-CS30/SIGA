@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title th:text="${title}">SIGA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div th:fragment="sidebar(activePage)" class="sidebar">
+        <div class="logo">
+            <img src="../img/logo_siga.png" alt="SIGA">
+        </div>
+
+        <nav>
+            <a th:class="${activePage == 'dashboard' ? 'active' : ''}" href="/dashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a th:class="${activePage == 'equipment' ? 'active' : ''}" href="/equipment">
+                <i class="fas fa-laptop"></i> Equipos
+            </a>
+            <a th:class="${activePage == 'rental' ? 'active' : ''}" href="/rental">
+                <i class="fas fa-file-signature"></i> Alquileres
+            </a>
+            <a th:class="${activePage == 'maintenance' ? 'active' : ''}" href="/maintenance">
+                <i class="fas fa-tools"></i> Mantenimiento
+            </a>
+            <a th:class="${activePage == 'monitoring' ? 'active' : ''}" href="/monitoring">
+                <i class="fas fa-satellite-dish"></i> Monitoreo
+            </a>
+            <a th:class="${activePage == 'reports' ? 'active' : ''}" href="#">
+                <i class="fas fa-chart-bar"></i> Reportes
+            </a>
+        </nav>
+
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i>
+            <div>
+                <strong th:text="${#authentication.name}">Administrador</strong>
+                
+                <p th:text="${#strings.replace(#authentication.authorities[0].authority, 'ROLE_', '')}"></p>
+            </div>
+
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn-logout">
+                    <i class="fas fa-right-from-bracket"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

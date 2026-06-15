@@ -186,3 +186,34 @@ button:hover{
 .register a:hover{
     text-decoration:underline;
 }
+
+
+
+/* 1. Forzar que el select tenga el mismo comportamiento visual que tus inputs */
+.inputbox select {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    padding: 0 35px 0 5px;
+    color: #fff;
+    cursor: pointer;
+    -webkit-appearance: none; /* Quita la flecha por defecto de Windows/Chrome */
+    -moz-appearance: none;    /* Quita la flecha por defecto de Firefox */
+    appearance: none;         /* Quita la flecha estándar */
+}
+
+/* 2. Estilo para los textos de la lista desplegable al hacer clic */
+.inputbox select option {
+    background: #1c1c1c; /* Pon aquí el color oscuro de fondo de tu sección */
+    color: #fff;
+    padding: 10px;
+}
+
+/* 3. ¡El truco de la animación! Hace que la etiqueta flote igual que en los inputs */
+.inputbox select:focus ~ label,
+.inputbox select:valid ~ label {
+    top: -5px;
+}

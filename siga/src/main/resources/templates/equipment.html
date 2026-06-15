@@ -1,199 +1,89 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>SIGA Equipo</title>
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
+    <div th:replace="~{fragments/layout :: head('SIGA Equipos')}"></div>
     <link rel="stylesheet" href="/css/equipment.css">
 </head>
 <body>
 
+<div th:replace="~{fragments/layout :: sidebar('equipment')}"></div>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-
-    <div class="logo">
-        <img src="../img/logo_siga.png" alt="SIGA">
-    </div>
-
-    <nav>
-        <a href="/dashboard">
-            <i class="fas fa-chart-line"></i>
-            Dashboard
-        </a>
-
-        <a class="active" href="/equipment">
-            <i class="fas fa-laptop"></i>
-            Equipos
-        </a>
-
-        <a href="/rental">
-            <i class="fas fa-file-signature"></i>
-            Alquileres
-        </a>
-
-        <a href="/maintenance">
-            <i class="fas fa-tools"></i>
-            Mantenimiento
-        </a>
-
-        <a href="/monitoring">
-            <i class="fas fa-satellite-dish"></i>
-            Monitoreo
-        </a>
-
-        <a href="#">
-            <i class="fas fa-chart-bar"></i>
-            Reportes
-        </a>
-    <!--
-        <a href="#">
-            <i class="fas fa-gear"></i>
-            Configuración
-        </a>
-        -->
-    </nav>
-
-    <div class="user-info">
-        <i class="fas fa-user-circle"></i>
-        <div>
-            <strong>Administrador</strong>
-            <p th:text="${#authentication.name}"></p>
-        </div>
-
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="btn-logout">
-                <i class="fas fa-right-from-bracket"></i>
-            </button>
-        </form>
-        
-    </div>
-
-</div>
-
-
-<!-- CONTENIDO -->
 <div class="content">
-
     <div class="header">
-
         <div>
             <h1>Equipos</h1>
             <span>Gestión de todos los equipos</span>
         </div>
-
         <div class="profile-top">
             <i class="fa-regular fa-bell"></i>
-
             <nav>
                 <button type="button" class="btn-add" onclick="abrirModal()">
-                    <i class="fas fa-plus"></i>
-                    Añadir Equipo
+                    <i class="fas fa-plus"></i> Añadir Equipo
                 </button>
             </nav>
         </div>
-
     </div>
 
-    <!-- MODAL -->
     <div id="modalEquipo" class="modal">
-
         <div class="modal-content">
-
             <span class="close" onclick="cerrarModal()">&times;</span>
-
             <h2>Registrar Equipo</h2>
-
             <form id="formEquipment" action="/equipment/save" method="post">
-
                 <input type="hidden" id="equipmentId">
-
                 <input id="code" type="text" name="code" placeholder="Código" required>
-
                 <input id="brand" type="text" name="brand" placeholder="Marca" required>
-
                 <input id="serialNumber" type="text" name="serialNumber" placeholder="N° Serie" required>
-
                 <input id="year" type="number" name="year" placeholder="Año" required>
-
                 <input id="hourMeter" type="number" name="hourMeter" placeholder="Horómetro" required>
-
                 <input id="mileage" type="number" name="mileage" placeholder="Kilometraje" value="0" required>
-
-                <button type="submit">
-                    Guardar Equipo
-                </button>
-
+                <button type="submit">Guardar Equipo</button>
             </form>
-
         </div>
-
     </div>
 
-    <!-- TABLA DE EQUIPOS -->
     <div class="table-container">
-
         <table class="tabla-equipos">
-
             <thead>
-            <tr>
-                <th>Código</th>
-                <th>Marca</th>
-                <th>N° Serie</th>
-                <th>Año</th>
-                <th>Horómetro</th>
-                <th>Kilometraje</th>
-                <th>Acciones</th>
-            </tr>
+                <tr>
+                    <th>Código</th>
+                    <th>Marca</th>
+                    <th>N° Serie</th>
+                    <th>Año</th>
+                    <th>Horómetro</th>
+                    <th>Kilometraje</th>
+                    <th>Acciones</th>
+                </tr>
             </thead>
-
             <tbody>
-
-            <tr th:each="equipment : ${equitment}">
-
-                <td th:text="${equipment.code}"></td>
-
-                <td th:text="${equipment.brand}"></td>
-
-                <td th:text="${equipment.serialNumber}"></td>
-
-                <td th:text="${equipment.year}"></td>
-
-                <td th:text="${equipment.hourMeter}"></td>
-
-                <td th:text="${equipment.mileage}"></td>
-
-                <td>
-
-                    <button class="btn-edit"
-                            th:data-id="${equipment.id}"
-                            th:data-brand="${equipment.brand}"
-                            th:data-serial="${equipment.serialNumber}"
-                            th:data-year="${equipment.year}"
-                            th:data-hour="${equipment.hourMeter}"
-                            th:data-mileage="${equipment.mileage}"
-                            onclick="editarEquipo(this)">
-                        <i class="fas fa-edit"></i>
-                    </button>
-
-                    <button class="btn-delete"
-                            th:onclick="'eliminarEquipo(' + ${equipment.id} + ')'">
-                        <i class="fas fa-trash"></i>
-                    </button>
-
-                </td>
-
-            </tr>
-
+                <tr th:each="equipment : ${equitment}">
+                    <td th:text="${equipment.code}"></td>
+                    <td th:text="${equipment.brand}"></td>
+                    <td th:text="${equipment.serialNumber}"></td>
+                    <td th:text="${equipment.year}"></td>
+                    <td th:text="${equipment.hourMeter}"></td>
+                    <td th:text="${equipment.mileage}"></td>
+                    <td>
+                        <button class="btn-edit"
+                                th:data-id="${equipment.id}"
+                                th:data-brand="${equipment.brand}"
+                                th:data-serial="${equipment.serialNumber}"
+                                th:data-year="${equipment.year}"
+                                th:data-hour="${equipment.hourMeter}"
+                                th:data-mileage="${equipment.mileage}"
+                                onclick="editarEquipo(this)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-delete"
+                                th:onclick="'eliminarEquipo(' + ${equipment.id} + ')'">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
             </tbody>
-
         </table>
-
     </div>
-
 </div>
+
 <script src="/js/equipment.js"></script>
 </body>
 </html>

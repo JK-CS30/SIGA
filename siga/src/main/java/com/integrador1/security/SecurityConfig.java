@@ -51,40 +51,36 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Rutas públicas y protegidas
+                // 1. Control de accesos (Público vs Protegido)
                 .authorizeHttpRequests(auth -> auth
+                        // Únicamente lo que se puede ver sin haber iniciado sesión
                         .requestMatchers(
                                 "/login",
                                 "/signup",
                                 "/req/signup",
-                                "/dashboard",
-                                "/equitment",
-                                "/rental",
-                                "/maintenance",
-                                "/monitoring",
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
                                 "/h2-console/**"
-
                         ).permitAll()
+
+                        // OBLIGA a que el Dashboard, Rental, Maintenance, etc., requieran loguearse
                         .anyRequest().authenticated()
                 )
 
-                // Configuración del formulario de login
+                // 2. Formulario de Login configurado correctamente
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/dashboard");
-                        })
+                        // defaultSuccessUrl con 'true' fuerza a Spring a guardar la sesión antes de redirigir
+                        .defaultSuccessUrl("/dashboard", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
 
-                // Configuración de logout
+                // 3. Control de Logout
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
@@ -99,5 +95,5 @@ public class SecurityConfig {
                 );
 
         return http.build();
-    }
+        }
 }

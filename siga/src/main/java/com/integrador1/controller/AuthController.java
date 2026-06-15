@@ -22,20 +22,16 @@ public class AuthController {
     public String registrarUsuario(
             @RequestParam String username,
             @RequestParam String correo,
-            @RequestParam String password) {
+            @RequestParam String password,
+            @RequestParam String rol) { // <-- 1. Recibimos el rol del formulario
 
         System.out.println("=== REGISTRO ===");
-        System.out.println(username);
-        System.out.println(correo);
-        System.out.println(password);
+        System.out.println("Usuario: " + username);
+        System.out.println("Rol seleccionado: " + rol);
 
-
-        userService.registrarUsuario(
-                username,
-                correo,
-                password);
+        // 2. Pasamos el rol al método del servicio
+        userService.registrarUsuario(username, correo, password, rol);
 
         return "redirect:/login";
     }
-
 }

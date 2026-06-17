@@ -10,7 +10,7 @@ public class Equipment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(unique = true)
     private String code;
     @NotBlank
@@ -19,67 +19,64 @@ public class Equipment {
     private String serialNumber;
     private Integer year;
     @NotNull
-    private double hourMeter;
-    @NotNull
-    private double mileage;
+    private Double usageIndicator;
+    @Column(name = "imagen", columnDefinition = "bytea")
+    @org.hibernate.annotations.JdbcType(org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType.class)
+    private byte[] imagen;
+    @Column(name = "status", nullable = false)
+    private String status = "DISPONIBLE"; // Estado inicial por defecto
+
+    // GETTERS Y SETTERS 
 
 
-    //GETTERS Y SETTERS
-
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
-
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
-
     public String getCode() {
         return code;
     }
-
     public void setCode(String code) {
         this.code = code;
     }
-
     public String getBrand() {
         return brand;
     }
-
     public void setBrand(String brand) {
         this.brand = brand;
     }
-
     public String getSerialNumber() {
         return serialNumber;
     }
-
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
-
     public Integer getYear() {
         return year;
     }
-
     public void setYear(Integer year) {
         this.year = year;
     }
-
-    public double getHourMeter() {
-        return hourMeter;
+    
+    public byte[] getImagen() {
+        return imagen;
     }
-
-    public void setHourMeter(double hourMeter) {
-        this.hourMeter = hourMeter;
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
-
-    public double getMileage() {
-        return mileage;
+    public Double getUsageIndicator() {
+        return usageIndicator;
     }
-
-    public void setMileage(double mileage) {
-        this.mileage = mileage;
+    public void setUsageIndicator(Double usageIndicator) {
+        this.usageIndicator = usageIndicator;
     }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    } 
+    
 }

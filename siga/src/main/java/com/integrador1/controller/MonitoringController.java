@@ -30,7 +30,7 @@ public class MonitoringController {
     public String monitoring(Model model){
 
         model.addAttribute("equipments",
-                equipmentService.listarEquipos());
+                equipmentService.getAllEquipment());
 
         model.addAttribute("rentals",
                 rentalService.listRentals());
@@ -39,7 +39,7 @@ public class MonitoringController {
                 maintenanceService.listMaintenance());
 
         model.addAttribute("equipmentCount",
-                equipmentService.listarEquipos().size());
+                equipmentService.getAllEquipment().size());
 
         model.addAttribute("activeRentals",
                 rentalService.countActiveRentals());

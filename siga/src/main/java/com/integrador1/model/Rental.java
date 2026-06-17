@@ -1,9 +1,6 @@
 package com.integrador1.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
 
 @Entity
@@ -13,13 +10,11 @@ public class Rental {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate date;
-    @NotNull
-    private double hourlyRate;
+    
     private double totalAmount;
-    @NotBlank
-    private String customerName;
-    @NotBlank
-    private String customerRuc;
+    private String customerName; 
+    private String customerRuc; // Almacenado internamente para auditoría, oculto en la web
+    private String serviceDescription; 
     private String status;
     private String observaciones;
 
@@ -31,86 +26,65 @@ public class Rental {
     @JoinColumn(name = "operator_id")
     private MyAppUser operator;
 
-    //GETTERS AND SETTERS
-
-    public Long getId() {
-        return id;
+    /**
+     * SENIOR TIP: Centralización de la visualización del destino en reportes.
+     */
+    public String getDisplayDestination() {
+        if (this.customerName != null && !this.customerName.isBlank()) {
+            return this.customerName + " - " + (this.serviceDescription != null ? this.serviceDescription : "");
+        }
+        return this.serviceDescription != null ? this.serviceDescription : "Servicio Interno / Evento";
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // --- GETTERS AND SETTERS ---
 
-    public LocalDate getDate() {
-        return date;
-    }
+    public Long getId() { 
+        return id; }
+    public void setId(Long id) { 
+        this.id = id; }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
+    public LocalDate getDate() { 
+        return date; }
+    public void setDate(LocalDate date) { 
+        this.date = date; }
 
-    public double getHourlyRate() {
-        return hourlyRate;
-    }
+    public double getTotalAmount() { 
+        return totalAmount; }
+    public void setTotalAmount(double totalAmount) { 
+        this.totalAmount = totalAmount; }
 
-    public void setHourlyRate(double hourlyRate) {
-        this.hourlyRate = hourlyRate;
-    }
+    public String getCustomerName() { 
+        return customerName; }
+    public void setCustomerName(String customerName) { 
+        this.customerName = customerName; }
 
-    public double getTotalAmount() {
-        return totalAmount;
-    }
+    public String getCustomerRuc() { 
+        return customerRuc; }
+    public void setCustomerRuc(String customerRuc) { 
+        this.customerRuc = customerRuc; }
 
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
-    }
+    public String getServiceDescription() { 
+        return serviceDescription; }
+    public void setServiceDescription(String serviceDescription) { 
+        this.serviceDescription = serviceDescription; }
 
-    public String getCustomerName() {
-        return customerName;
-    }
+    public String getStatus() { 
+        return status; }
+    public void setStatus(String status) { 
+        this.status = status; }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+    public String getObservaciones() { 
+        return observaciones; }
+    public void setObservaciones(String observaciones) { 
+        this.observaciones = observaciones; }
 
-    public String getCustomerRuc() {
-        return customerRuc;
-    }
+    public Equipment getEquipment() { 
+        return equipment; }
+    public void setEquipment(Equipment equipment) { 
+        this.equipment = equipment; }
 
-    public void setCustomerRuc(String customerRuc) {
-        this.customerRuc = customerRuc;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
-    public Equipment getEquipment() {
-        return equipment;
-    }
-
-    public void setEquipment(Equipment equipment) {
-        this.equipment = equipment;
-    }
-
-    public MyAppUser getOperator() {
-        return operator;
-    }
-
-    public void setOperator(MyAppUser operator) {
-        this.operator = operator;
-    }
-
+    public MyAppUser getOperator() { 
+        return operator; }
+    public void setOperator(MyAppUser operator) { 
+        this.operator = operator; }
 }

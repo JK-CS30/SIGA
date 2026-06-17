@@ -1,183 +1,144 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <div th:replace="~{fragments/layout :: head('SIGA Equipos')}"></div>
+    <div th:replace="~{fragments/layout :: head('SIGA Alquileres')}"></div>
     <link rel="stylesheet" href="/css/equipment.css">
 </head>
 <body>
 
 <div th:replace="~{fragments/layout :: sidebar('rental')}"></div>
 
-<!-- CONTENIDO -->
 <div class="content">
-
     <div class="header">
-
         <div>
-            <h1>Alquileres</h1>
-            <span>Gestión de alquileres de equipos</span>
+            <h1>Alquileres / Servicios</h1>
+            <span>Gestión operativa y financiera de equipos</span>
         </div>
-
         <div class="profile-top">
             <i class="fa-regular fa-bell"></i>
-
             <nav>
-                <button type="button" class="btn-add" onclick="abrirModal()">
-                    <i class="fas fa-plus"></i>
-                    Añadir Alquiler
+                <button type="button" class="btn-add" onclick="abrirModalCrear()">
+                    <i class="fas fa-plus"></i> Registrar Nuevo Servicio
                 </button>
+                <!--
+                <a href="/rental/auditoria" class="btn-add" style="background-color: #6c757d; text-decoration: none; margin-left: 10px;">
+                    <i class="fas fa-history"></i> Auditoría
+                </a>
+                -->
             </nav>
         </div>
-
     </div>
 
-    <!-- MODAL -->
     <div id="modalRental" class="modal">
-
         <div class="modal-content">
-
-            <span class="close" onclick="cerrarModal()">&times;</span>
-
-            <h2>Registrar Equipo</h2>
-
-            <form id="formRental"
-                  action="/rental/save"
-                  method="post">
-
+            <span class="close" onclick="cerrarModalCrear()">&times;</span>
+            <h2>Apertura de Servicio (Status: ACTIVO)</h2>
+            <form id="formRental" action="/rental/save" method="post">
                 <select name="equipment.id" required>
-
-                    <option value="">
-                        Seleccione un equipo
-                    </option>
-
-                    <option th:each="equipment : ${equipments}"
-                            th:value="${equipment.id}"
-                            th:text="${equipment.code + ' - ' + equipment.brand}">
-                    </option>
-
+                    <option value="">Seleccione un equipo</option>
+                    <option th:each="equipment : ${equipments}" th:value="${equipment.id}" th:text="${equipment.code + ' - ' + equipment.brand}"></option>
                 </select>
 
                 <select name="operator.id" required>
-
-                    <option value="">
-                        Seleccione un operador
-                    </option>
-
-                    <option th:each="operator : ${operators}"
-                            th:value="${operator.id}"
-                            th:text="${operator.username}">
-                    </option>
-
+                    <option value="">Seleccione un operador</option>
+                    <option th:each="operator : ${operators}" th:value="${operator.id}" th:text="${operator.username}"></option>
                 </select>
 
-                <input type="text"
-                       name="customerName"
-                       placeholder="Nombre del Cliente"
-                       required>
-
-                <input type="text"
-                       name="customerRuc"
-                       placeholder="RUC / DNI"
-                       required>
-
-                <input type="number"
-                       step="0.01"
-                       name="hourlyRate"
-                       placeholder="Tarifa por Hora"
-                       required>
-
-                <input type="number"
-                       step="0.01"
-                       name="totalAmount"
-                       placeholder="Monto Total">
-
-                <input type="text"
-                       name="observaciones"
-                       placeholder="Observaciones">
-
-                <button type="submit">
-                    Guardar Alquiler
-                </button>
-
+                <input type="text" name="serviceDescription" placeholder="Descripción del Trabajo (Ej: Descarga auto / Trabajo BDP)" required>
+                <input type="text" name="customerName" placeholder="Nombre del Cliente (Opcional)">
+                <input type="text" name="customerRuc" placeholder="RUC / DNI Interno (Opcional)">
+                
+                <button type="submit">Iniciar Servicio</button>
             </form>
-
         </div>
-
     </div>
 
-    <!-- TABLA DE EQUIPOS -->
+    <div id="modalCierre" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalCierre()">&times;</span>
+            <h2>Finalizar y Liquidar Alquiler</h2>
+            <form id="formCierre" method="post">
+                
+                <label>Monto Total a Cobrar (S/.):</label>
+                <input type="number" step="0.01" name="totalAmount" placeholder="Ej: 250.00" required>
+
+                <label>Destino del Cobro / Estado:</label>
+                <select name="metodoPago" id="selectMetodoPago" onchange="evaluarMetodoPago()" required>
+                    <option value="EFECTIVO">EFECTIVO (Cierre Inmediato)</option>
+                    <option value="DEPOSITO">DEPÓSITO BANCARIO (Por Verificar Banco)</option>
+                    <option value="COBRO_TERCERO">ENCARGAR COBRO A TERCERO (Por Cobrar)</option>
+                </select>
+
+                <div id="divResponsable" style="display: none; margin-top: 10px; margin-bottom: 10px;">
+                    <label style="color: #007bff; font-weight: bold;">¿Quién se encargará del cobro?</label>
+                    <input type="text" name="responsableCobro" id="inputResponsable" placeholder="Ej: Oficina Central / Nombre del cobrador">
+                </div>
+
+                <label>Información Adicional / Observaciones:</label>
+                <input type="text" name="observaciones" placeholder="Detalles extra">
+
+                <button type="submit" style="background-color: #28a745;">Procesar Cierre</button>
+            </form>
+        </div>
+    </div>
+
     <div class="table-container">
-
         <table class="tabla-equipos">
-
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Equipo</th>
-                <th>Cliente</th>
-                <th>RUC / DNI</th>
+                <th>Servicio / Cliente</th>
                 <th>Operador</th>
-                <th>Fecha</th>
-                <th>Tarifa Hora</th>
-                <th>Monto Total</th>
+                <th>Fecha Inicio</th>
+                <th>Monto Cobrado</th>
                 <th>Estado</th>
-                <th>Observaciones</th>
-                <th>Acciones</th>
+                <th>Flujo de Caja / Observaciones</th>
+                <th>Acciones Financieras</th>
             </tr>
             </thead>
-
             <tbody>
-
             <tr th:each="rental : ${rentals}">
-
                 <td th:text="${rental.id}"></td>
-
                 <td th:text="${rental.equipment != null ? rental.equipment.code : 'Sin equipo'}"></td>
-
-                <td th:text="${rental.customerName}"></td>
-
-                <td th:text="${rental.customerRuc}"></td>
-
+                <td th:text="${rental.getDisplayDestination()}"></td>
                 <td th:text="${rental.operator.username}"></td>
-
                 <td th:text="${rental.date}"></td>
-
-                <td th:text="${rental.hourlyRate}"></td>
-
-                <td th:text="${rental.totalAmount}"></td>
-
-                <td th:text="${rental.status}"></td>
-
-                <td th:text="${rental.observaciones}"></td>
-
+                <td th:text="${rental.status == 'ACTIVO' ? 'En curso...' : 'S/. ' + rental.totalAmount}"></td>
                 <td>
-
-                    <form th:action="@{/rental/close/{id}(id=${rental.id})}"
-                          method="post"
-                          style="display:inline;">
-
-                        <button class="btn-edit"
-                                th:if="${rental.status == 'ACTIVO'}">
-                            Finalizar
-                        </button>
-
-                    </form>
-
-                    <button class="btn-delete"
-                            th:onclick="'eliminarRental(' + ${rental.id} + ')'">
-                        <i class="fas fa-trash"></i>
+                    <span th:text="${rental.status}" 
+                          th:style="${rental.status == 'PENDIENTE_DEPOSITO' || rental.status == 'PENDIENTE_COBRO' ? 'color:#dc3545; font-weight:bold;' : (rental.status == 'ACTIVO' ? 'color:#007bff;' : 'color:#28a745;')}">
+                    </span>
+                </td>
+                <td th:text="${rental.observaciones}"></td>
+                <td>
+                    <button class="btn-edit" th:if="${rental.status == 'ACTIVO'}" 
+                            th:onclick="'abrirModalCierre(' + ${rental.id} + ')'" style="background-color: #007bff;">
+                        <i class="fas fa-calculator"></i> Liquidar
                     </button>
 
+                    <form th:action="@{/rental/confirm-deposit/{id}(id=${rental.id})}" method="post" style="display:inline;" 
+                          th:if="${rental.status == 'PENDIENTE_DEPOSITO'}">
+                        <button class="btn-edit" style="background-color: #ffc107; color: #000;">
+                            <i class="fas fa-university"></i> Verificar Depósito
+                        </button>
+                    </form>
+
+                    <form th:action="@{/rental/confirm-third-party/{id}(id=${rental.id})}" method="post" style="display:inline;" 
+                          th:if="${rental.status == 'PENDIENTE_COBRO'}">
+                        <button class="btn-edit" style="background-color: #17a2b8; color: #fff;">
+                            <i class="fas fa-user-check"></i> Recibir Cobro
+                        </button>
+                    </form>
+
+                    <button class="btn-delete" th:onclick="'eliminarRental(' + ${rental.id} + ')'">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
-
             </tr>
-
             </tbody>
-
         </table>
-
     </div>
-
 </div>
 <script src="/js/rental.js"></script>
 </body>

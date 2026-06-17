@@ -20,24 +20,33 @@ function eliminarRental(id) {
 
 /* ===== MODAL ===== */
 
-function abrirModal() {
+function abrirModalCrear() { document.getElementById('modalRental').style.display = 'block'; }
+function cerrarModalCrear() { document.getElementById('modalRental').style.display = 'none'; }
 
-    document.getElementById("modalRental").style.display = "flex";
-
+function abrirModalCierre(id) {
+    var form = document.getElementById('formCierre');
+    form.action = '/rental/close/' + id;
+    document.getElementById('modalCierre').style.display = 'block';
 }
 
-function cerrarModal() {
+function evaluarMetodoPago() {
+    var metodo = document.getElementById('selectMetodoPago').value;
+    var divResponsable = document.getElementById('divResponsable');
+    var inputResponsable = document.getElementById('inputResponsable');
 
-    document.getElementById("modalRental").style.display = "none";
-
-}
-
-window.onclick = function(event) {
-
-    let modal = document.getElementById("modalRental");
-
-    if (event.target === modal) {
-        cerrarModal();
+    if (metodo === 'COBRO_TERCERO') {
+        divResponsable.style.display = 'block';
+        inputResponsable.required = true;
+    } else {
+        divResponsable.style.display = 'none';
+        inputResponsable.required = false;
+        inputResponsable.value = '';
     }
+}
 
+function cerrarModalCierre() {
+    document.getElementById('modalCierre').style.display = 'none';
+    document.getElementById('divResponsable').style.display = 'none';
+    document.getElementById('inputResponsable').required = false;
+    document.getElementById('formCierre').reset();
 }

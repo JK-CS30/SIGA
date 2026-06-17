@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments/layout :: head('Auditoría Alquileres')}"></div>
+    <link rel="stylesheet" href="/css/equipment.css">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar('rental')}"></div>
+
+<div class="content">
+    <div class="header">
+        <div>
+            <h1>Auditoría Interna de Servicios</h1>
+            <span style="color: #dc3545; font-weight: bold;">Historial completo de registros eliminados lógicamente (No modificables)</span>
+        </div>
+        <div class="profile-top">
+            <a href="/rental" class="btn-add" style="background-color: #007bff; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Volver a Alquileres
+            </a>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="tabla-equipos" style="border-top: 3px solid #dc3545;">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Equipo</th>
+                <th>Servicio / Cliente</th>
+                <th>Operador</th>
+                <th>Fecha de Registro</th>
+                <th>Monto Histórico</th>
+                <th>Estado Sistema</th>
+                <th>Trazabilidad / Observaciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="rental : ${deletedRentals}">
+                <td th:text="${rental.id}"></td>
+                <td th:text="${rental.equipment != null ? rental.equipment.code : 'Sin equipo'}"></td>
+                <td th:text="${rental.getDisplayDestination()}"></td>
+                <td th:text="${rental.operator.username}"></td>
+                <td th:text="${rental.date}"></td>
+                <td th:text="'S/. ' + ${rental.totalAmount}"></td>
+                <td th:text="${rental.status}" style="color: #dc3545; font-weight: bold;"></td>
+                <td th:text="${rental.observaciones}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -30,7 +30,7 @@ public class MaintenanceController {
 
         model.addAttribute(
                 "equipments",
-                equipmentService.listarEquipos());
+                equipmentService.getAllEquipment());
 
         return "maintenance";
     }
@@ -70,7 +70,7 @@ public class MaintenanceController {
 
         model.addAttribute(
                 "equipments",
-                equipmentService.listarEquipos()
+                equipmentService.getAllEquipment()
         );
 
         return "maintenance";

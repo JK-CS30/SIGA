@@ -29,7 +29,7 @@ public class DashboardController {
 
         model.addAttribute(
                 "totalEquipments",
-                equipmentService.listarEquipos().size());
+                equipmentService.getAllEquipment().size());
 
         model.addAttribute(
                 "activeRentals",

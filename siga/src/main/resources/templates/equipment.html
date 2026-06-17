@@ -27,16 +27,26 @@
     <div id="modalEquipo" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModal()">&times;</span>
-            <h2>Registrar Equipo</h2>
-            <form id="formEquipment" action="/equipment/save" method="post">
-                <input type="hidden" id="equipmentId">
-                <input id="code" type="text" name="code" placeholder="Código" required>
+            <h2 id="modalTitle">Registrar Equipo</h2>
+            
+            <form id="formEquipment" action="/equipment/save" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="equipmentId" name="id">
+                
+                <label for="code">Código del Equipo:</label>
+                <input id="code" type="text" name="code" th:value="${nextCode}" readonly style="background-color: #f0f0f0; font-weight: bold;">
+                
                 <input id="brand" type="text" name="brand" placeholder="Marca" required>
                 <input id="serialNumber" type="text" name="serialNumber" placeholder="N° Serie" required>
                 <input id="year" type="number" name="year" placeholder="Año" required>
-                <input id="hourMeter" type="number" name="hourMeter" placeholder="Horómetro" required>
-                <input id="mileage" type="number" name="mileage" placeholder="Kilometraje" value="0" required>
-                <button type="submit">Guardar Equipo</button>
+                <input type="hidden" name="status" value="DISPONIBLE" />
+
+                <label for="usageIndicator">Indicador de Uso Actual:</label>
+                <input id="usageIndicator" type="number" step="0.1" name="usageIndicator" placeholder="Kilometraje o Horas totales" required>
+                
+                <label for="fileImagen">Imagen del Equipo:</label>
+                <input id="fileImagen" type="file" name="fileImagen" accept="image/*">
+                
+                <button type="submit" id="btnGuardar">Guardar Equipo</button>
             </form>
         </div>
     </div>
@@ -45,31 +55,57 @@
         <table class="tabla-equipos">
             <thead>
                 <tr>
+                    <th>Imagen</th>
                     <th>Código</th>
                     <th>Marca</th>
                     <th>N° Serie</th>
                     <th>Año</th>
-                    <th>Horómetro</th>
-                    <th>Kilometraje</th>
+                    <th>Horómetro / Kilometraje</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="equipment : ${equitment}">
+                    <td>
+                        <div th:if="${equipment.imagen != null}">
+                            <img th:src="'data:image/png;base64,' + ${#conversions.convert(equipment.imagen, 'java.lang.String')}" 
+                                 alt="Equipo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"/>
+                        </div>
+                        <div th:unless="${equipment.imagen != null}">
+                            <i class="fas fa-laptop" style="font-size: 24px; color: #ccc;"></i>
+                        </div>
+                    </td>
                     <td th:text="${equipment.code}"></td>
                     <td th:text="${equipment.brand}"></td>
                     <td th:text="${equipment.serialNumber}"></td>
                     <td th:text="${equipment.year}"></td>
-                    <td th:text="${equipment.hourMeter}"></td>
-                    <td th:text="${equipment.mileage}"></td>
+                    <td th:text="${equipment.usageIndicator}"></td>
+                    <td class="text-center">
+                        <span th:if="${equipment?.status == 'DISPONIBLE'}" class="badge bg-success text-white p-2">
+                            <i class="bi bi-check-circle-fill"></i> Disponible
+                        </span>
+                        
+                        <span th:if="${equipment?.status == 'OCUPADO'}" class="badge bg-warning text-dark p-2">
+                            <i class="bi bi-hourglass-split"></i> Ocupado
+                        </span>
+                        
+                        <span th:if="${equipment?.status == 'EN_MANTENIMIENTO'}" class="badge bg-danger text-white p-2">
+                            <i class="bi bi-tools"></i> En Mantenimiento
+                        </span>
+
+                        <span th:if="${equipment?.status == null || equipment?.status == ''}" class="badge bg-secondary text-white p-2">
+                            <i class="bi bi-question-circle"></i> Sin Estado
+                        </span>
+                    </td>
                     <td>
                         <button class="btn-edit"
                                 th:data-id="${equipment.id}"
+                                th:data-code="${equipment.code}"
                                 th:data-brand="${equipment.brand}"
                                 th:data-serial="${equipment.serialNumber}"
                                 th:data-year="${equipment.year}"
-                                th:data-hour="${equipment.hourMeter}"
-                                th:data-mileage="${equipment.mileage}"
+                                th:data-usage="${equipment.usageIndicator}"
                                 onclick="editarEquipo(this)">
                             <i class="fas fa-edit"></i>
                         </button>

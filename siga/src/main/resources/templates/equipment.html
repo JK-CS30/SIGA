@@ -61,7 +61,7 @@
                     <th>N° Serie</th>
                     <th>Año</th>
                     <th>Horómetro / Kilometraje</th>
-                    <th>Estado</th>
+                    <th>Estado Actual</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -81,21 +81,9 @@
                     <td th:text="${equipment.serialNumber}"></td>
                     <td th:text="${equipment.year}"></td>
                     <td th:text="${equipment.usageIndicator}"></td>
-                    <td class="text-center">
-                        <span th:if="${equipment?.status == 'DISPONIBLE'}" class="badge bg-success text-white p-2">
-                            <i class="bi bi-check-circle-fill"></i> Disponible
-                        </span>
-                        
-                        <span th:if="${equipment?.status == 'OCUPADO'}" class="badge bg-warning text-dark p-2">
-                            <i class="bi bi-hourglass-split"></i> Ocupado
-                        </span>
-                        
-                        <span th:if="${equipment?.status == 'EN_MANTENIMIENTO'}" class="badge bg-danger text-white p-2">
-                            <i class="bi bi-tools"></i> En Mantenimiento
-                        </span>
-
-                        <span th:if="${equipment?.status == null || equipment?.status == ''}" class="badge bg-secondary text-white p-2">
-                            <i class="bi bi-question-circle"></i> Sin Estado
+                    <td>
+                        <span th:text="${equipment.status}" 
+                            th:style="${equipment.status == 'ALQUILADO' ? 'color:#dc3545; font-weight:bold;' : (equipment.status == 'MANTENIMIENTO' ? 'color:#ffc107; font-weight:bold;' : 'color:#28a745; font-weight:bold;')}">
                         </span>
                     </td>
                     <td>

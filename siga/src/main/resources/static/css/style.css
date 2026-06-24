@@ -196,7 +196,7 @@ button:hover{
     background: transparent;
     border: none;
     outline: none;
-    font-size: 1em;
+    font-size: .85em;
     padding: 0 35px 0 5px;
     color: #fff;
     cursor: pointer;
@@ -215,5 +215,7 @@ button:hover{
 /* 3. ¡El truco de la animación! Hace que la etiqueta flote igual que en los inputs */
 .inputbox select:focus ~ label,
 .inputbox select:valid ~ label {
-    top: -5px;
+    top:-8px;
+    font-size:.85rem;
+    color:goldenrod;
 }

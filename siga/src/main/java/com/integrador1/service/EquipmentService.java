@@ -53,7 +53,7 @@ public class EquipmentService {
                 .orElseThrow(() -> new RuntimeException("Equipment not found"));
     }
 
-    //Elimina un equipo (Borrado Lógico)
+    //Elimina un equipo
     public void deleteEquipment(Long id) {
         // 1. Buscar el equipo por su ID
         Equipment equipment = repository.findById(id)

@@ -2,17 +2,16 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments/layout :: head('SIGA Equipos')}"></div>
-    <link rel="stylesheet" href="/css/equipment.css">
+    <link rel="stylesheet" href="/css/maintenance.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 
 <div th:replace="~{fragments/layout :: sidebar('maintenance')}"></div>
 
-<!-- CONTENIDO -->
 <div class="content">
 
     <div class="header">
-
         <div>
             <h1>Mantenimientos</h1>
             <span>Gestión de mantenimiento</span>
@@ -20,7 +19,6 @@
 
         <div class="profile-top">
             <i class="fa-regular fa-bell"></i>
-
             <nav>
                 <button type="button" class="btn-add" onclick="abrirModal()">
                     <i class="fas fa-plus"></i>
@@ -28,33 +26,22 @@
                 </button>
             </nav>
         </div>
-
     </div>
 
-    <!-- MODAL -->
     <div id="modalMaintenace" class="modal">
-
         <div class="modal-content">
-
             <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Registrar Mantenimiento</h2>
 
-            <h2>Registrar Equipo</h2>
-
-            <form id="formMaintenance"
-                  action="/maintenance/save"
-                  method="post">
-
+            <form id="formMaintenance" th:action="@{/maintenance/save}" method="post">
+                
                 <select name="equipment.id" required>
-
-                    <option value="">
-                        Seleccione un equipo
+                    <option value="">Seleccione un equipo</option>
+                    <option th:each="equipment : ${equipments}" 
+                            th:if="${equipment.status == 'DISPONIBLE'}"
+                            th:value="${equipment.id}" 
+                            th:text="${equipment.code + ' - ' + equipment.brand}">
                     </option>
-
-                    <option th:each="equipo : ${equipments}"
-                            th:value="${equipo.id}"
-                            th:text="${equipo.code + ' - ' + equipo.brand}">
-                    </option>
-
                 </select>
 
                 <select name="type" required>
@@ -63,110 +50,84 @@
                     <option value="CORRECTIVO">Correctivo</option>
                 </select>
 
-                <input type="text"
-                       name="description"
-                       placeholder="Descripción"
-                       required>
+                <input type="text" name="description" placeholder="Descripción / Motivo de ingreso" required>
 
-                <input type="text"
-                       name="hourMeter"
-                       placeholder="Horómetro">
+                <input type="number" step="0.01" name="usageIndicator" placeholder="Horómetro Actual" required>
 
-                <input type="number"
-                       step="0.01"
-                       name="cost"
-                       placeholder="Costo"
-                       required>
+                <input type="number" step="0.01" name="cost" placeholder="Costo Inicial (Opcional)">
+                <input type="text" name="observations" placeholder="Observaciones Iniciales (Opcional)">
+                
+                <input type="number" step="0.01" name="nextMaintenanceUsage" placeholder="Horómetro Próximo Mantenimiento (Opcional)">
 
-                <input type="text"
-                       name="observations"
-                       placeholder="Observaciones"
-                       required>
-
-                <button type="submit">
-                    Guardar Mantenimiento
-                </button>
-
+                <button type="submit">Guardar Mantenimiento</button>
             </form>
-
         </div>
-
     </div>
 
-    <!-- TABLA DE EQUIPOS -->
     <div class="table-container">
-
         <table class="tabla-equipos">
-
             <thead>
             <tr>
-                <th>Código</th>
+                <th>ID</th>
                 <th>Equipo</th>
-                <th>Fecha de Ingreso</th>
-                <th>Fecha de Salida</th>
-                <th>Estado</th>
                 <th>Tipo</th>
-                <th>Descripción</th>
-                <th>Horometro</th>
+                <th>Ingreso</th>
+                <th>Horómetro</th>
                 <th>Costo</th>
-                <th>Observaciones</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
             </thead>
-
             <tbody>
-
             <tr th:each="maintenance : ${maintenances}">
-
                 <td th:text="${maintenance.id}"></td>
-
                 <td th:text="${maintenance.equipment.code}"></td>
-
-                <td th:text="${maintenance.entryDate}"></td>
-
-                <td th:text="${maintenance.exitDate}"></td>
-
-                <td th:text="${maintenance.status}"></td>
-
                 <td th:text="${maintenance.type}"></td>
-
-                <td th:text="${maintenance.description}"></td>
-
-                <td th:text="${maintenance.hourMeter}"></td>
-
-                <td th:text="${maintenance.cost}"></td>
-
-                <td th:text="${maintenance.observations}"></td>
-
+                <td th:text="${maintenance.entryDate != null ? #temporals.format(maintenance.entryDate, 'dd-MM-yyyy') : 'Pendiente (Planificado)'}"></td>
+                <td th:text="${maintenance.usageIndicator + ' hrs'}"></td>
+                <td th:text="${maintenance.cost != null ? '$' + #numbers.formatDecimal(maintenance.cost, 1, 2) : ' '}"></td>
                 <td>
+                    <span th:text="${maintenance.status}" 
+                          th:class="'status ' + ${#strings.toLowerCase(#strings.replace(maintenance.status, ' ', '-'))}">
+                    </span>
+                </td>
+                <td>
+                    <div style="display: inline-flex; gap: 5px;">
+                        
+                        <th:block th:if="${maintenance.status == 'Planificado'}">
+                            <form th:action="@{/maintenance/start/{id}(id=${maintenance.id})}" method="post">
+                                <button type="submit" class="btn-start-work" title="Ingresar al taller">
+                                    <i class="bi bi-play-fill"></i>
+                                </button>
+                            </form>
+                            <form th:action="@{/maintenance/cancel/{id}(id=${maintenance.id})}" method="post"
+                                onsubmit="return confirm('¿Seguro que deseas anular esta planificación?');">
+                                <button type="submit" class="btn-cancel-work" title="Anular Planificación">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                </button>
+                            </form>
+                        </th:block>
 
-                    <form th:action="@{/maintenance/close/{id}(id=${maintenance.id})}"
-                          method="post"
-                          style="display:inline;">
+                        <th:block th:if="${maintenance.status == 'En Mantenimiento'}">
+                            <form th:action="@{/maintenance/close/{id}(id=${maintenance.id})}" method="post">
+                                <button type="submit" class="btn-close-work" title="Completar y dar Salida">
+                                    <i class="bi bi-check-circle-fill"></i> 
+                                </button>
+                            </form>
+                        </th:block>
+                        
+                    </div>
 
-                        <button class="btn-edit"
-                                th:if="${maintenance.status == 'ABIERTO'}">
-                            Cerrar
-                        </button>
-
-                    </form>
-
-                    <button class="btn-delete"
-                            th:onclick="'eliminarMantenimiento(' + ${maintenance.id} + ')'">
+                    <button class="btn-delete" th:onclick="'eliminarMantenimiento(' + ${maintenance.id} + ')'" title="Eliminar del Historial">
                         <i class="fas fa-trash"></i>
                     </button>
-
                 </td>
-
             </tr>
-
             </tbody>
-
         </table>
-
     </div>
-
 </div>
+
 <script src="/js/maintenance.js"></script>
 </body>
 </html>

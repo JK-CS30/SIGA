@@ -4,6 +4,13 @@ import com.integrador1.model.Rental;
 import com.integrador1.service.EquipmentService;
 import com.integrador1.service.MyAppUserService;
 import com.integrador1.service.RentalService;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -68,4 +75,28 @@ public class RentalController {
         model.addAttribute("deletedRentals", rentalService.listDeletedRentals());
         return "rental-audit"; 
     }
+
+    @PostMapping("/confirm-deposit/{id}")
+    public String confirmarDeposito(
+            @PathVariable Long id,
+            @RequestParam("montoFinal") BigDecimal montoFinal,
+            @RequestParam(value = "observacionesAjuste", required = false) String observacionesAjuste) {
+        
+        Rental rental = rentalService.getRental(id);
+        
+        // Si el administrador modificó el monto en la ventana, se actualiza
+        rental.setTotalAmount(montoFinal.doubleValue());
+        
+        // Si dejó una nota de por qué cambió el monto, la concatenamos a las observaciones
+        if (observacionesAjuste != null && !observacionesAjuste.isBlank()) {
+            rental.setObservaciones(rental.getObservaciones() + " | Ajuste: " + observacionesAjuste);
+        }
+        
+        rental.setStatus("FINALIZADO");
+        rentalService.updateRental(id, rental);
+        
+        return "redirect:/rental";
+    }
+
+    
 }

@@ -27,13 +27,28 @@ public class Rental {
     private MyAppUser operator;
 
     /**
-     * SENIOR TIP: Centralización de la visualización del destino en reportes.
+     * Centralización de la visualización del destino en reportes.
      */
     public String getDisplayDestination() {
         if (this.customerName != null && !this.customerName.isBlank()) {
             return this.customerName + " - " + (this.serviceDescription != null ? this.serviceDescription : "");
         }
         return this.serviceDescription != null ? this.serviceDescription : "Servicio Interno / Evento";
+    }
+
+    public String getFormatedFlujo() {
+        if (this.observaciones == null) return "";
+        
+        // Si manejas un campo específico para el método/flujo, úsalo aquí. 
+        // Suponiendo que lo obtienes de una variable o del inicio del texto:
+        if (this.observaciones.contains("COBRO_TERCERO")) {
+            return this.observaciones.replace("COBRO_TERCERO", "Por Cobrar");
+        }
+        if (this.observaciones.contains("DEPOSITO")) {
+            return this.observaciones.replace("DEPOSITO", "Depósito Bancario");
+        }
+        
+        return this.observaciones;
     }
 
     // --- GETTERS AND SETTERS ---

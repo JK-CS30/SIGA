@@ -3,6 +3,7 @@
 <head>
     <div th:replace="~{fragments/layout :: head('SIGA Equipos')}"></div>
     <link rel="stylesheet" href="/css/monitoring.css">
+    <link rel="stylesheet" href="/css/global.css">
 </head>
 <body>
 
@@ -10,99 +11,130 @@
 
 <!-- CONTENIDO -->
 <div class="content">
-
+    
+    <!-- CABECERA DE LA PÁGINA -->
     <div class="header">
         <div>
-            <h1>Monitoreo</h1>
-            <span>Monitorización de equipos en tiempo real</span>
+            <h1>Monitoreo Integral del Sistema</h1>
+            <span>Control operativo de activos, flujo financiero del día y salud de la infraestructura</span>
+        </div>
+        <div class="profile-top">
+            <button class="btn-refresh-monitor" onclick="window.location.reload()">
+                <i class="fa-solid fa-sync-alt"></i> Actualizar Panel
+            </button>
         </div>
     </div>
 
-    <!-- CARDS -->
-    <div class="cards">
-
-        <div class="card">
-            <i class="fas fa-laptop"></i>
-            <h3>Total de Equipos</h3>
-            <span th:text="${equipments.size()}"></span>
+    <!-- 1. FILA DE KPIs: FLUJO FINANCIERO Y OPERATIVO EN TIEMPO REAL -->
+    <div class="monitor-kpi-grid">
+        <div class="kpi-card effective-sale">
+            <div class="kpi-icon"><i class="fa-solid fa-cash-register"></i></div>
+            <div class="kpi-data">
+                <h3>Venta Efectiva (Hoy)</h3>
+                <!-- Aquí se inyecta la sumatoria de alquileres con estado FINALIZADO y COBRADO -->
+                <p th:text="${'S/ ' + #numbers.formatDecimal(totalRecaudadoDia, 1, 2)}">S/ 1,250.00</p>
+            </div>
         </div>
 
-        <div class="card">
-            <i class="fas fa-file-signature"></i>
-            <h3>Alquileres Activos</h3>
-            <span th:text="${rentals.size()}"></span>
+        <div class="kpi-card pending-sale">
+            <div class="kpi-icon"><i class="fa-solid fa-clock-history"></i></div>
+            <div class="kpi-data">
+                <h3>Dinero en Tránsito</h3>
+                <!-- Alquileres finalizados por operador pero estancados en PENDIENTE_COBRO -->
+                <p th:text="${'S/ ' + #numbers.formatDecimal(dineroTransito, 1, 2)}">S/ 360.30</p>
+                <span class="kpi-subtext">* Requiere acción en módulo cobros</span>
+            </div>
         </div>
 
-        <div class="card">
-            <i class="fas fa-tools"></i>
-            <h3>Registro de Mantenimiento</h3>
-            <span th:text="${maintenances.size()}"></span>
+        <div class="kpi-card active-assets">
+            <div class="kpi-icon"><i class="fa-solid fa-truck-loading"></i></div>
+            <div class="kpi-data">
+                <h3>Equipos en Operación</h3>
+                <p th:text="${equipmentsActivosCount}">8</p>
+                <span class="kpi-subtext">Generando ingresos activos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SECCIÓN CENTRAL: PARTICIÓN 50/50 -->
+    <div class="monitor-center-layout">
+        
+        <!-- COLUMNA IZQUIERDA: INFRAESTRUCTURA Y SERVICIOS TÉCNICOS -->
+        <div class="monitor-panel-box">
+            <h2><i class="fa-solid fa-server text-esmeralda"></i> Infraestructura de TI</h2>
+            <div class="divider-sm"></div>
+            
+            <div class="status-row">
+                <span>Conexión Base de Datos:</span>
+                <span class="badge badge-success"><i class="fa-solid fa-circle"></i> ONLINE</span>
+            </div>
+            
+            <div class="metric-progress-wrapper">
+                <div class="metric-labels">
+                    <span>Asignación de Memoria (JVM):</span>
+                    <span th:text="${usedMemory + ' / ' + maxMemory}">0.45 GB / 4.00 GB</span>
+                </div>
+                <div class="progress-bg">
+                    <div class="progress-fill fill-esmeralda" th:style="'width: ' + ${memoryPercentage} + '%'"></div>
+                </div>
+            </div>
+
+            <div class="metric-progress-wrapper">
+                <div class="metric-labels">
+                    <span>Almacenamiento Físico (`/uploads`):</span>
+                    <span th:text="${diskFreeSpace}">85% Disponible</span>
+                </div>
+                <div class="progress-bg">
+                    <div class="progress-fill fill-blue" th:style="'width: ' + ${diskPercentage} + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: ESTADO INTEGRAL DE LA FLOTA (ACTIVOS) -->
+        <div class="monitor-panel-box">
+            <h2><i class="fa-solid fa-boxes-stacked text-esmeralda"></i> Monitoreo de Flota y Mantenimientos</h2>
+            <div class="divider-sm"></div>
+            
+            <div class="fleet-status-container">
+                <div class="fleet-stat-item">
+                    <span class="circle-indicator bg-success"></span>
+                    <span class="fleet-label">Disponibles para Venta:</span>
+                    <strong th:text="${equiposDisponibles}">14</strong>
+                </div>
+                <div class="fleet-stat-item">
+                    <span class="circle-indicator bg-warning"></span>
+                    <span class="fleet-label">En Mantenimiento Preventivo:</span>
+                    <strong th:text="${mantenimientosPreventivos}">3</strong>
+                </div>
+                <div class="fleet-stat-item">
+                    <span class="circle-indicator bg-danger"></span>
+                    <span class="fleet-label">En Mantenimiento Correctivo:</span>
+                    <strong th:text="${mantenimientosCorrectivos}">2</strong>
+                </div>
+            </div>
+            
+            <div class="alert-box-monitor" th:if="${mantenimientosCorrectivos > 0}">
+                <i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                <span>Atención: Hay equipos retenidos por fallas críticas fuera de operación.</span>
+            </div>
         </div>
 
     </div>
 
-    <!-- DOS PANELES -->
-    <div class="monitor-grid">
-
-        <!-- ALERTAS -->
-        <div class="panel">
-            <h2>Alerta Mantenimientos</h2>
-
-            <table class="tabla-equipos">
-                <thead>
-                <tr>
-                    <th>Equipo</th>
-                    <th>Estado</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr th:each="m : ${maintenances}"
-                    th:if="${m.status != null and #strings.toUpperCase(#strings.trim(m.status)) == 'ABIERTO'}">
-
-                    <!-- EQUIPO -->
-                    <td th:text="${m.equipment.code}"></td>
-
-                    <!-- ESTADO -->
-                    <td>
-                        <span class="badge bg-success" th:text="${m.status}"></span>
-                    </td>
-
-                </tr>
-                </tbody>
-            </table>
-
+    <!-- 3. SECCIÓN INFERIOR: CONSOLA DE AUDITORÍA DE LOGS -->
+    <div class="log-console-container">
+        <div class="log-header">
+            <h2><i class="fa-solid fa-terminal text-esmeralda"></i> Consola de Auditoría de Procesos (Logs del Servidor)</h2>
+            <span class="pulse-indicator"><i class="fa-solid fa-circle"></i> Escuchando eventos...</span>
         </div>
-
-        <!-- ALQUILERES -->
-        <div class="panel">
-            <h2>Registro de Alquileres</h2>
-
-            <table class="tabla-equipos">
-                <thead>
-                <tr>
-                    <th>Equipo</th>
-                    <th>Cliente</th>
-                    <th>Estado</th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr th:each="r : ${rentals}"
-                    th:if="${r.status != null and r.status.toUpperCase() == 'ACTIVO'}">
-
-                    <td th:text="${r.equipment.code}"></td>
-                    <td th:text="${r.customerName}"></td>
-
-                    <td>
-                        <span class="badge bg-primary" th:text="${r.status}"></span>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
+        <div class="log-terminal" id="terminalMonitor">
+            <!-- Iteración dinámica de las trazas del backend -->
+            <div th:each="line : ${logsLines}" 
+                 th:text="${line}"
+                 th:classappend="${#strings.contains(line,'ERROR') || #strings.contains(line,'Exception')} ? 'log-error' : (${#strings.contains(line,'WARN')} ? 'log-warn' : 'log-info')"
+                 class="log-line">
+            </div>
         </div>
-
     </div>
 
 </div>

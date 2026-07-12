@@ -6,6 +6,9 @@ import com.integrador1.service.MaintenanceService;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -52,10 +55,12 @@ public class MaintenanceController {
     }
 
     @PostMapping("/maintenance/close/{id}")
-    public String closeMaintenance(@PathVariable Long id){
+    public String closeMaintenance(@PathVariable Long id, 
+                                    @RequestParam Double cost,
+                                    @RequestParam String observations, 
+                                    @RequestParam Double nextMaintenanceUsage){
 
-        maintenanceService.closeMaintenance(id);
-
+        maintenanceService.closeMaintenance(id, cost, observations, nextMaintenanceUsage);
         return "redirect:/maintenance";
     }
 
@@ -101,5 +106,21 @@ public class MaintenanceController {
     public String cancelMaintenance(@PathVariable Long id) {
         maintenanceService.cancelMaintenance(id);
         return "redirect:/maintenance";
+    }
+
+    @GetMapping("/maintenance/detail/{id}")
+    @ResponseBody
+    public ResponseEntity<Maintenance> getMaintenanceDetail(@PathVariable Long id) {
+        // Reutilizamos el método findById standard de tu service
+        return maintenanceService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/maintenance/equipment/{equipmentId}")
+    @ResponseBody
+    public ResponseEntity<List<Maintenance>> getMaintenanceByEquipment(@PathVariable Long equipmentId){
+        List<Maintenance> list = maintenanceService.findByEquipmentId(equipmentId);
+        return ResponseEntity.ok(list);
     }
 }

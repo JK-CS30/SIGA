@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,26 +32,44 @@ public class RentalController {
     }
 
     @GetMapping("/rental")
-    public String listRentals(Model model){
-        model.addAttribute("rentals", rentalService.listRentals());
+    public String listRentals(@RequestParam(value = "status", required = false) String status, Model model) {
+        List<Rental> rentals;
+
+        if (status == null || status.isBlank() || "TODOS".equalsIgnoreCase(status)) {
+            rentals = rentalService.listRentals(); //Alquiler activo
+        } else if ("PENDIENTE".equalsIgnoreCase(status)) {
+            rentals = rentalService.listPendientes(); //Alquiler pendiente
+        } else {
+            rentals = rentalService.listByStatus(status.toUpperCase()); // Alquiler activo o finalizado
+        }
+
+        model.addAttribute("rentals", rentals);
         model.addAttribute("equipments", equipmentService.getAllEquipment());
         model.addAttribute("operators", myAppUserService.listarUsuarios());
+        
+        // Guardamos el estado actual en el modelo para saber qué botón iluminar en la vista
+        model.addAttribute("currentStatus", status != null ? status.toUpperCase() : "TODOS");
+        
         return "rental";
     }
 
     @PostMapping("/rental/save")
-    public String saveRental(Rental rental){
+    public String saveRental(Rental rental, Authentication authentication){
+        Boolean isOwner = authentication != null && authentication.getAuthorities().contains(new SimpleGrantedAuthority("OWNER"));
+        if (!isOwner || rental.getDate() == null){
+            rental.setDate(LocalDate.now());
+        }
         rentalService.registerRental(rental);
         return "redirect:/rental";
     }
 
     @PostMapping("/rental/close/{id}")
     public String closeRental(@PathVariable Long id, 
-                               @RequestParam double totalAmount,
-                               @RequestParam String metodoPago,
-                               @RequestParam(required = false) String responsableCobro,
+                               @RequestParam Double totalAmount,
+                               @RequestParam String paymentMethod,
+                               @RequestParam(required = false) String collectionsResponsible,
                                @RequestParam(required = false) String observaciones){
-        rentalService.closeRental(id, totalAmount, metodoPago, responsableCobro, observaciones);
+        rentalService.closeRental(id, totalAmount, paymentMethod, collectionsResponsible, observaciones);
         return "redirect:/rental";
     }
 
@@ -96,6 +117,15 @@ public class RentalController {
         rentalService.updateRental(id, rental);
         
         return "redirect:/rental";
+    }
+
+    @GetMapping("/rental/detail/{id}")
+    @ResponseBody
+    public ResponseEntity<Rental> getRentalDetail(@PathVariable Long id) {
+        // Buscamos el alquiler por su ID usando el servicio
+        return rentalService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     

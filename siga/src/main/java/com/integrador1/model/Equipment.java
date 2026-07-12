@@ -1,8 +1,10 @@
 package com.integrador1.model;
 
 import jakarta.persistence.*;
+import java.util.Base64;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "equipment")
@@ -26,6 +28,7 @@ public class Equipment {
     @Column(name = "status", nullable = false)
     private String status = "DISPONIBLE"; // Estado inicial por defecto
 
+    
     // GETTERS Y SETTERS 
 
 

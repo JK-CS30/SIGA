@@ -87,4 +87,9 @@ public class EquipmentService {
 
         return repository.save(existingEquipment);
     }
+
+    public long countByStatus(String status) {
+        Long count = repository.countByStatus(status);
+        return count != null ? count : 0L;
+    }
 }

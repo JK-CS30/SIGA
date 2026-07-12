@@ -2,6 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments/layout :: head('SIGA Dashboard')}"></div>
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
@@ -9,31 +10,66 @@
 <div th:replace="~{fragments/layout :: sidebar('dashboard')}"></div>
 
 <div class="content">
+
     <div class="header">
-        <div>
-            <h1>Dashboard</h1>
-            <span>Resumen general del sistema</span>
+        <h1>Dashboard General</h1>
+        <span>Bienvenido Administrador | Vista Consolidada</span>
+
+        
+    </div>
+
+    <div class="kpi-container">
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="kpi-data">
+                <h3 th:text="${total_Amount != null} ? 'S/. ' + ${#numbers.formatDecimal(total_Amount, 1, 'DEFAULT', 2, 'DEFAULT')} : 'S/. 0.00'"></h3>
+                <p>Ingresos por Alquileres</p>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-chart-pie"></i></div>
+            <div class="kpi-data">
+                <h3 th:text="${ocupiedEquipment != null} ? (${ocupiedEquipment} + ' %') : ' 0%'">
+                    84.2%
+                </h3>
+                <p>Ocupación de Inventario</p>
+            </div>
+        </div>
+
+        <div class="kpi-card alert-orange">
+            <div class="kpi-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="kpi-data">
+                <h3 th:text="${openMaintenances != null} ? |${openMaintenances} Equipos| : 'Sin Equipos'">
+                    3 Equipos
+                </h3>
+                <p>Mantenimiento Activos</p>
+            </div>
+        </div>
+        
+        <div class="kpi-card">
+            <div class="kpi-icon"><i class="fas fa-clock"></i></div>
+            <div class="kpi-data">
+                <h3 th:text="${activeRentals != null} ? |${activeRentals} Alquileres| : 'Sin Alquileres'">
+                    10 Alquileres
+                </h3>
+                <p>Por Vencer (48h)</p>
+            </div>
         </div>
     </div>
 
-    <div class="cards">
-        <div class="card">
-            <h3>Total Equipos</h3>
-            <span th:text="${totalEquipments}"></span>
-        </div>
-        <div class="card">
-            <h3>Equipos en Uso</h3>
-            <span th:text="${activeRentals}"></span>
-        </div>
-        <div class="card">
-            <h3>Mantenimiento Pendiente</h3>
-            <span th:text="${openMaintenances}"></span>
-        </div>
-        <div class="card">
-            <h3>Alquileres Activos</h3>
-            <span th:text="${activeRentals}"></span>
-        </div>
-    </div>
+    <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 25px;">
+        
+        <div class="table-container">
+            <h3>Control de Operaciones Críticas</h3>
+            </div>
+
+        <div class="table-container">
+            <h3>Aprobaciones Pendientes</h3>
+            </div>
+</div>
 
     <div class="middle">
         <div class="panel">

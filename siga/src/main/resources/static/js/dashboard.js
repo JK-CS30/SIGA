@@ -1,3 +1,8 @@
+function toggleSidebar(){
+    const body = document.body;
+    body.classList.toggle('sidebar-collapsed');
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
     // Resaltar menú activo

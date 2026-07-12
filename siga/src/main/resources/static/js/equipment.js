@@ -1,3 +1,7 @@
+function toggleSidebar(){
+    const body = document.body;
+    body.classList.toggle('sidebar-collapsed');
+}
 
 function editarEquipo(btn) {
 
@@ -65,7 +69,7 @@ function abrirModal() {
     
     document.getElementById('formEquipment').reset();
     document.getElementById('code').value = codigoSiguienteSujeto;
-    document.getElementById('modalEquipo').style.display = "block";
+    document.getElementById('modalEquipo').style.display = "flex";
 }
 
 function cerrarModal() {

@@ -2,6 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments/layout :: head('SIGA Equipos')}"></div>
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/equipment.css">
 </head>
 <body>
@@ -14,14 +15,13 @@
             <h1>Equipos</h1>
             <span>Gestión de todos los equipos</span>
         </div>
-        <div class="profile-top">
-            <i class="fa-regular fa-bell"></i>
-            <nav>
-                <button type="button" class="btn-add" onclick="abrirModal()">
-                    <i class="fas fa-plus"></i> Añadir Equipo
-                </button>
-            </nav>
-        </div>
+        <div th:replace="~{fragments/layout :: header}"></div>
+    </div>
+
+    <div>
+        <button type="button" class="btn-add" onclick="abrirModal()">
+            <i class="fas fa-plus"></i> Añadir Equipo
+        </button>
     </div>
 
     <div id="modalEquipo" class="modal">
@@ -33,7 +33,7 @@
                 <input type="hidden" id="equipmentId" name="id">
                 
                 <label for="code">Código del Equipo:</label>
-                <input id="code" type="text" name="code" th:value="${nextCode}" readonly style="background-color: #f0f0f0; font-weight: bold;">
+                <input id="code" type="text" name="code" th:value="${nextCode}" readonly>
                 
                 <input id="brand" type="text" name="brand" placeholder="Marca" required>
                 <input id="serialNumber" type="text" name="serialNumber" placeholder="N° Serie" required>
@@ -69,8 +69,7 @@
                 <tr th:each="equipment : ${equitment}">
                     <td>
                         <div th:if="${equipment.imagen != null}">
-                            <img th:src="'data:image/png;base64,' + ${#conversions.convert(equipment.imagen, 'java.lang.String')}" 
-                                 alt="Equipo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"/>
+                            <img th:src="'data:image/png;base64,' + ${equipment.imagen}" alt="Equipo" width="50" height="50"/>
                         </div>
                         <div th:unless="${equipment.imagen != null}">
                             <i class="fas fa-laptop" style="font-size: 24px; color: #ccc;"></i>
@@ -97,6 +96,7 @@
                                 onclick="editarEquipo(this)">
                             <i class="fas fa-edit"></i>
                         </button>
+                                                
                         <button class="btn-delete"
                                 th:onclick="'eliminarEquipo(' + ${equipment.id} + ')'">
                             <i class="fas fa-trash"></i>

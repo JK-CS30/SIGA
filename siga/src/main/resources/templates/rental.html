@@ -2,8 +2,9 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments/layout :: head('SIGA Alquileres')}"></div>
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/rental.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 
@@ -15,75 +16,47 @@
             <h1>Alquileres / Servicios</h1>
             <span>Gestión operativa y financiera de equipos</span>
         </div>
-        <div class="profile-top">
-            <i class="fa-regular fa-bell"></i>
-            <nav>
-                <button type="button" class="btn-add" onclick="abrirModalCrear()">
-                    <i class="fas fa-plus"></i> Registrar Nuevo Servicio
-                </button>
-                <!--
-                <a href="/rental/auditoria" class="btn-add" style="background-color: #6c757d; text-decoration: none; margin-left: 10px;">
-                    <i class="fas fa-history"></i> Auditoría
-                </a>
-                -->
-            </nav>
-        </div>
+        <div th:replace="~{fragments/layout :: header}"></div>
     </div>
 
-    <div class="rendicion-container" style="background: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 25px; border-left: 5px solid #28a745;">
-        <div style="margin-bottom: 15px;">
-            <h3 style="margin: 0; color: #1f4e78; font-size: 18px; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-wallet" style="color: #28a745;"></i> Módulo de Rendición y Arqueo de Caja
-            </h3>
-            <span style="color: #6c757d; font-size: 13px;">Consolide y exporte los montos totales recaudados por cada operador en su período de corte.</span>
+    <div class="action-container">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input class="btn-search" type="search" name="searchRental" placeholder="Buscar Alquiler...">
         </div>
 
-        <form th:action="@{/rental/rendicion}" method="get" id="formRendicion" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
-            
-            <div style="flex: 1; min-width: 200px;">
-                <label style="display: block; font-size: 12px; font-weight: bold; color: #495057; margin-bottom: 6px;">1. Operador que Rinde Cuentas:</label>
-                <select name="operadorId" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 6px; height: 40px; background-color: #f8f9fa;">
-                    <option value="">-- Seleccione el Operador --</option>
-                    <option th:each="op : ${operators}" th:value="${op.id}" th:text="${op.username}" th:selected="${op.id == param.operadorId}"></option>
-                </select>
-            </div>
+        <button type="button" class="btn-accountability">
+            <i class="bi bi-file-earmark-text" style="color: rgba(45, 212, 191, 0.5);"></i>Rendición
+        </button>
 
-            <div style="width: 160px;">
-                <label style="display: block; font-size: 12px; font-weight: bold; color: #495057; margin-bottom: 6px;">Fecha Desde:</label>
-                <input type="date" name="desde" th:value="${param.desde}" required style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 6px; height: 40px;">
-            </div>
+        <button type="button" class="btn-add" onclick="abrirModalCrear()">
+            <i class="fa fa-plus"></i>Registrar Nuevo Servicio
+        </button>
+    </div>
 
-            <div style="width: 160px;">
-                <label style="display: block; font-size: 12px; font-weight: bold; color: #495057; margin-bottom: 6px;">Fecha Hasta:</label>
-                <input type="date" name="hasta" th:value="${param.hasta}" required style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 6px; height: 40px;">
-            </div>
-
-            <div style="width: 240px;">
-                <label style="display: block; font-size: 12px; font-weight: bold; color: #495057; margin-bottom: 6px;">2. Tipo de Mapeo de Dinero:</label>
-                <select name="vistaFlujo" id="vistaFlujo" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 6px; height: 40px; background-color: #fff; font-weight: 500; color: #1f4e78;">
-                    <option value="TOTAL_RECAUDADO">💰 Todo el dinero en su poder</option>
-                    <option value="COBROS_PROPIOS">👤 Solo sus servicios propios</option>
-                    <option value="COBROS_OTROS">👥 Recaudación de otros operadores</option>
-                </select>
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 0 20px; height: 40px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
-                    <i class="fas fa-sync-alt"></i> Calcular en Pantalla
-                </button>
-                
-                <button type="button" onclick="descargarExcelRendicion()" style="background-color: #28a745; color: white; border: none; padding: 0 20px; height: 40px; border-radius: 6px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;">
-                    <i class="fas fa-file-excel"></i> Generar Cierre .xlsx
-                </button>
-            </div>
-        </form>
+    <div class="status-container">
+        <a th:href="@{/rental(status='TODOS')}" class="btn-status-link btn-viewall" th:classappend="${currentStatus == 'TODOS'} ? 'active' : ''">
+            Ver Todo
+        </a>
+        
+        <a th:href="@{/rental(status='ACTIVO')}" class="btn-status-link btn-active" th:classappend="${currentStatus == 'ACTIVO'} ? 'active' : ''">
+            Activo
+        </a>
+        
+        <a th:href="@{/rental(status='FINALIZADO')}" class="btn-status-link btn-finalized" th:classappend="${currentStatus == 'FINALIZADO'} ? 'active' : ''">
+            Finalizado
+        </a>
+        
+        <a th:href="@{/rental(status='PENDIENTE')}" class="btn-status-link btn-pending" th:classappend="${currentStatus == 'PENDIENTE'} ? 'active' : ''">
+            Pendiente
+        </a>
     </div>
 
 
     <div id="modalRental" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModalCrear()">&times;</span>
-            <h2>Apertura de Servicio (Estado: ACTIVO)</h2>
+            <h2>Apertura de Servicio</h2>
             <form id="formRental" action="/rental/save" method="post">
                 <select name="equipment.id" required>
                     <option value="">Seleccione un equipo</option>
@@ -94,14 +67,54 @@
                     </option>
                 </select>
 
-                <select name="operator.id" required>
-                    <option value="">Seleccione un operador</option>
-                    <option th:each="operator : ${operators}" th:value="${operator.id}" th:text="${operator.username}"></option>
-                </select>
+                <div sec:authorize="hasAnyRole('ADMIN', 'OWNER')" style="width: 100%; margin-bottom: 15px;">
+                    <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Operador Asigando</label>
+                    <select name="operator.id" required>
+                        <option value="">Seleccione un operador</option>
+                        <option th:each="operator : ${operators}" 
+                                th:value="${operator.id}" 
+                                th:text="${operator.username}">
+                        </option>
+                    </select>
+                </div>
+
+                <div sec:authorize="!hasAnyRole('ADMIN', 'OWNER')" style="width: 100%; margin-bottom: 15px;">
+                    <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Operador del Servicio</label>
+                    
+                    <input type="text" 
+                        th:value="${#authentication.name}" 
+                        class="form-control"  
+                        disabled />
+                    2.
+                    <input type="hidden" 
+                        name="operator.id" 
+                        th:value="${#authentication.principal.id}" />
+                </div>
 
                 <input type="text" name="serviceDescription" placeholder="Descripción del Trabajo (Descarga auto / Trabajo BDP)" required>
                 <input type="text" name="customerName" placeholder="Nombre del Cliente (Opcional)">
                 <input type="text" name="customerRuc" placeholder="RUC / DNI Interno (Opcional)">
+                <div sec:authorize="hasRole('OWNER')" style="width: 100%; margin-bottom: 10px;">
+                    <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Fecha del Alquiler</label>
+                    <input type="date" 
+                        id="date" 
+                        name="date" 
+                        th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                        class="form-control" 
+                        required />
+                </div>
+
+                <div sec:authorize="!hasRole('OWNER')" style="width: 100%; margin-bottom: 10px;">
+                    <label style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Fecha del Alquiler</label>
+                    <input type="date" 
+                        id="dateDisabled" 
+                        th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                        class="form-control" 
+                        disabled />
+                    <input type="hidden" 
+                        name="date" 
+                        th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" />
+                </div>          
                 
                 <button type="submit">Iniciar Servicio</button>
             </form>
@@ -112,30 +125,45 @@
         <div class="modal-content">
             <span class="close" onclick="cerrarModalCierre()">&times;</span>
             <h2>Finalizar y Liquidar Alquiler</h2>
-            <form id="formCierre" method="post">
+            <form id="formCierre" method="post" enctype="multipart/form-data">
                 
-                <label>Monto Total a Cobrar (S/.):</label>
-                <input type="number" step="0.01" name="totalAmount" placeholder="Ej: 250.00" required>
+                <label>Monto Total:</label>
+                <input type="number" step="0.01" name="totalAmount" placeholder="S/ 250.0" required>
 
-                <label>Destino del Cobro / Estado:</label>
-                <select name="metodoPago" id="selectMetodoPago" onchange="evaluarMetodoPago()" required>
+                <label>Método de Pago:</label>
+                <select name="paymentMethod" id="selectMetodoPago" onchange="evaluarMetodoPago()" required>
                     <option value="EFECTIVO">EFECTIVO</option>
                     <option value="DEPOSITO">DEPÓSITO BANCARIO</option>
-                    <option value="COBRO_TERCERO">ENCARGAR COBRO A TERCERO</option>
+                    <option value="COBRO_TERCERO">COBRO TERCERO</option>
                 </select>
 
-                <div id="divResponsable" style="display: none; margin-top: 10px; margin-bottom: 10px;">
-                    <label style="color: #007bff; font-weight: bold;">Encargado del cobro:</label>
-                    <input type="text" name="responsableCobro" id="inputResponsable" placeholder="Oficina Central / Nombre del cobrador">
+                <div id="divResponsable" style="display: none; margin-top: 10px;">
+                    <label>Encargado del cobro:</label>
+                    <input type="text" name="collectionsResponsible" id="inputResponsable">
                 </div>
 
-                <label>Información Adicional / Observaciones:</label>
-                <input type="text" name="observaciones" placeholder="Detalles extra">
+                <label style="margin-top: 10px;">Observaciones (Detalles):</label>
+                <input type="text" name="observaciones" placeholder="Ej: Notas adicionales...">
 
-                <button type="submit" style="background-color: #28a745;">Procesar Cierre</button>
+                <button type="submit">Procesar Cierre</button>
             </form>
         </div>
     </div>
+
+    <td style="line-height: 1.4;">
+        <div th:if="${rental?.paymentMethod != null}">
+            <strong>Método:</strong> 
+            <span th:text="${rental.paymentMethod == 'COBRO_TERCERO' ? 'Cobro Tercero' : rental.paymentMethod}"></span>
+        </div>
+        
+        <div th:if="${rental?.paymentMethod == 'COBRO_TERCERO' and rental?.collectionsResponsible != null}">
+            <strong>Encargado:</strong> <span th:text="${rental.collectionsResponsible}"></span>
+        </div>
+        
+        <div th:if="${rental?.observaciones != null and !#strings.isEmpty(rental.observaciones)}">
+            <strong>Obs:</strong> <span th:text="${rental.observaciones}"></span>
+        </div>
+    </td>
 
     <div class="table-container">
         <table class="tabla-equipos">
@@ -148,8 +176,8 @@
                 <th>Fecha Inicio</th>
                 <th>Monto Cobrado</th>
                 <th>  Estado  </th>
-                <th>Flujo de Caja / Observaciones</th>
-                <th>Acciones Financieras</th>
+                <th>Metodo / Encargado</th>
+                <th>Acciones </th>
             </tr>
             </thead>
             <tbody>
@@ -162,14 +190,28 @@
                 <td th:text="${rental.status == 'ACTIVO' ? 'En curso...' : 'S/. ' + rental.totalAmount}"></td>
                 <td>
                     <span th:class="${rental.status == 'PENDIENTE_DEPOSITO' || rental.status == 'PENDIENTE_COBRO' ? 'status-pending' : (rental.status == 'ACTIVO' ? 'status-active' : 'status-completed')}"
-                        th:text="${rental.status == 'PENDIENTE_DEPOSITO' ? 'Pendiente Depósito' : 
-                                    (rental.status == 'PENDIENTE_COBRO' ? 'Pendiente Cobro' : 
+                        th:text="${rental.status == 'PENDIENTE_DEPOSITO' ? 'Pendiente' : 
+                                    (rental.status == 'PENDIENTE_COBRO' ? 'Pendiente' : 
                                     (rental.status == 'ACTIVO' ? 'Activo' : 'Finalizado'))}">
                     </span>
                 </td>
-                <td th:text="${rental.observaciones != null} ? 
-                    ${#strings.replace(#strings.replace(rental.observaciones, 'COBRO_TERCERO', 'Por Cobrar'), 'DEPOSITO', 'Depósito')} 
-                    :''"></td>
+                <td style="line-height: 1.2;">
+                    <div th:if="${rental.paymentMethod == 'EFECTIVO'}">
+                        <i class="fas fa-money-bill-wave" style="color: green;"></i> <strong>Efectivo</strong>
+                    </div>
+
+                    <div th:if="${rental.paymentMethod == 'DEPOSITO'}">
+                        <i class="fas fa-university" style="color: blue;"></i> <strong>Depósito</strong>
+                    </div>
+
+                    <div th:if="${rental.paymentMethod == 'COBRO_TERCERO'}">
+                        <i class="fas fa-handshake" style="color: orange;"></i> <strong>Tercero</strong><br>
+                        <span style="font-size: 0.85em; color: #555;">Encargado: 
+                            <span th:text="${rental.collectionsResponsible ?: 'Sin asignar'}"></span>
+                        </span>
+                    </div>
+                    
+                </td>
                 <td>
                     <div style="display: inline-flex; gap: 6px; align-items: center;">
                         
@@ -182,14 +224,19 @@
                                 th:if="${rental.status == 'PENDIENTE_DEPOSITO'}"
                                 th:onclick="'abrirModalConfirmacion(' + ${rental.id} + ', ' + ${rental.totalAmount} + ', \'deposit\')'"
                                 title="Verificar Depósito Bancario">
-                            <i class="fas fa-university"></i>Verificar Deposito
+                            <i class="fas fa-university"></i>Cobrar
                         </button>
 
                         <button type="button" class="btn-receive-payment" 
                                 th:if="${rental.status == 'PENDIENTE_COBRO'}"
                                 th:onclick="'abrirModalConfirmacion(' + ${rental.id} + ', ' + ${rental.totalAmount} + ', \'third-party\')'"
                                 title="Recibir Cobro">
-                            <i class="fas fa-hand-holding-usd"></i>Recibir Cobro
+                            <i class="fas fa-hand-holding-usd"></i>Cobrar
+                        </button>
+
+                        <button class="btn-view-detail" title="Ver detalle completo"
+                                th:onclick="'verDetalleRental(' + ${rental.id} + ')'">
+                            <i class="bi bi-eye-fill"></i>
                         </button>
 
                         <button type="button" class="btn-delete" th:onclick="'eliminarRental(' + ${rental.id} + ')'" title="Eliminar Registro">
@@ -221,6 +268,49 @@
 
                 <button type="submit" style="background-color: #28a745; margin-top: 15px;">Confirmar y Validar Dinero</button>
             </form>
+        </div>
+    </div>
+
+    <div id="modalDetalle" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalDetalle()">&times;</span>
+            <div>
+                <h2 class="modal-divider">
+                    <i class="bi bi-file-earmark-text"></i> Detalle de Alquiler #<span id="rentId"></span>
+                </h2>
+            </div>
+
+            <div class="modal-inf">
+                <div>
+                    <span class="stl-inf">Cliente:</span> <strong id="rentCliente"></strong>
+                </div>
+
+                <div>
+                    <span class="stl-inf">Equipo Asignado:</span> <strong id="rentEquipo"></strong>
+                </div>
+
+                <div class="stl-inf2">
+                    <span class="stl-inf">Monto total:</span>
+                    <span id="rentMonto" style="color: #28a745; font-size: 24px; font-weight: bold;"></span>
+                </div>
+
+                <div>
+                    <span class="stl-inf">Fecha de Registro:</span> <strong id="rentfecha"></strong>
+                </div>
+
+                <div>
+                    <span class="stl-inf">Operador a Cargo:</span> <strong id="rentOperador"></strong>
+                </div>
+            </div>
+
+            <div class="stl-inf1">
+                <h4>Descripción del Servicio:</h4> <p id="rentDescripcion"></p>
+            </div>
+
+            <div class="stl-inf1">
+                <h4>Observaciones:</h4> <p id="rentObservaciones"></p>
+            </div>
+
         </div>
     </div>
 

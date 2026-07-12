@@ -3,27 +3,43 @@ package com.integrador1.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "rental")
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @DateTimeFormat(pattern = "yyyy-MM-dd") 
     private LocalDate date;
     
     private double totalAmount;
+
     private String customerName; 
+
     private String customerRuc; // Almacenado internamente para auditoría, oculto en la web
+    
     private String serviceDescription; 
     private String status;
+    private String paymentMethod;
+    private String collectionsResponsible;
+
     private String observaciones;
+
+    @Column(nullable = true)
+    private String workSheetUrl;
 
     @ManyToOne
     @JoinColumn(name = "equipment_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Equipment equipment;
 
     @ManyToOne
     @JoinColumn(name = "operator_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private MyAppUser operator;
 
     /**
@@ -102,4 +118,30 @@ public class Rental {
         return operator; }
     public void setOperator(MyAppUser operator) { 
         this.operator = operator; }
+
+    public String getPartWorkUrl() {
+        return workSheetUrl;
+    }
+
+    public void setPartWorkUrl(String partWorkUrl) {
+        this.workSheetUrl = partWorkUrl;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getCollectionsResponsible() {
+        return collectionsResponsible;
+    }
+
+    public void setCollectionsResponsible(String collectionsResponsible) {
+        this.collectionsResponsible = collectionsResponsible;
+    }
+
+    
 }

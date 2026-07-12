@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,19 +34,20 @@ public class Maintenance {
     private String status;
 
     @NotNull
-    private  BigDecimal usageIndicator;
-    
-    @Column(precision = 10, scale = 2)
-    private BigDecimal cost = BigDecimal.ZERO;
+    private  Double usageIndicator;
+
+    @Column(name = "cost")
+    private Double cost;
 
     @Column(columnDefinition = "TEXT")
     private String observations;
 
-    @Column(name = "next_maintenance_usage", precision = 10, scale = 2)
-    private BigDecimal nextMaintenanceUsage;
+    @Column(name = "next_maintenance_usage")
+    private Double nextMaintenanceUsage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "equipment_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @NotNull
     private Equipment equipment;
 
@@ -122,22 +125,22 @@ public class Maintenance {
     }
 
 
-    public BigDecimal getUsageIndicator() {
+    public Double getUsageIndicator() {
         return usageIndicator;
     }
 
 
-    public void setUsageIndicator(BigDecimal usageIndicator) {
+    public void setUsageIndicator(Double usageIndicator) {
         this.usageIndicator = usageIndicator;
     }
 
 
-    public BigDecimal getCost() {
+    public Double getCost() {
         return cost;
     }
 
 
-    public void setCost(BigDecimal cost) {
+    public void setCost(Double cost) {
         this.cost = cost;
     }
 
@@ -152,12 +155,12 @@ public class Maintenance {
     }
 
 
-    public BigDecimal getNextMaintenanceUsage() {
+    public Double getNextMaintenanceUsage() {
         return nextMaintenanceUsage;
     }
 
 
-    public void setNextMaintenanceUsage(BigDecimal nextMaintenanceUsage) {
+    public void setNextMaintenanceUsage(Double nextMaintenanceUsage) {
         this.nextMaintenanceUsage = nextMaintenanceUsage;
     }
 

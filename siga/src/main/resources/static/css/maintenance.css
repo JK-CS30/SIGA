@@ -1,220 +1,3 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-}
-
-body {
-    display: flex;
-    min-height: 100vh;
-    background: radial-gradient(circle at top right, #0d2825 0%, #070b12 60%, #030508 100%);
-    color: #cbd5e1;
-    overflow-x: hidden;
-}
-
-/* ==========================================
-   SIDEBAR 
-   ========================================== */
-.sidebar {
-    width: 250px;
-    height: 100vh;
-    background: rgba(10, 17, 28, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    color: #94a3b8;
-    position: fixed;
-    left: 0;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid rgba(20, 184, 166, 0.15);
-    z-index: 100;
-}
-
-.logo {
-    text-align: center;
-    padding: 25px 20px;
-    border-bottom: 1px solid rgba(20, 184, 166, 0.1);
-}
-
-.logo img {
-    width: 120px;
-    filter: drop-shadow(0 0 12px rgba(20, 184, 166, 0.4));
-}
-
-.sidebar nav {
-    flex: 1;
-    padding: 15px 10px;
-}
-
-.sidebar nav a {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 15px;
-    text-decoration: none;
-    color: #94a3b8;
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-bottom: 4px;
-    font-size: 14px;
-}
-
-.sidebar nav a:hover {
-    background: rgba(20, 184, 166, 0.05);
-    color: #14b8a6;
-    border-color: rgba(20, 184, 166, 0.15);
-    padding-left: 20px;
-}
-
-.sidebar nav a.active {
-    background: rgba(20, 184, 166, 0.12);
-    color: #2dd4bf;
-    font-weight: 600;
-    border-left: 4px solid #14b8a6;
-    box-shadow: 0 0 15px rgba(20, 184, 166, 0.1);
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px;
-    border-top: 1px solid rgba(20, 184, 166, 0.1);
-    color: #f8fafc;
-    background: rgba(6, 10, 17, 0.4);
-}
-
-/* ==========================================
-   CONTENIDO PRINCIPAL
-   ========================================== */
-.content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    padding: 40px;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 35px;
-}
-
-.header h1 {
-    color: #f8fafc;
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
-}
-
-.header span {
-    color: #94a3b8;
-    font-size: 14px;
-}
-
-.profile-top {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: #f8fafc;
-}
-
-.profile-top i {
-    font-size: 20px;
-    cursor: pointer;
-    color: #94a3b8;
-    transition: color 0.2s, text-shadow 0.2s;
-}
-
-.profile-top i:hover {
-    color: #2dd4bf;
-    text-shadow: 0 0 10px rgba(45, 212, 191, 0.4);
-}
-
-/* Botón Superior Principal (Registrar) */
-.profile-top a {
-    text-decoration: none;
-    background: #14b8a6; 
-    color: #042f2e;
-    padding: 10px 22px;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    font-size: 13px;
-    transition: all 0.2s ease;
-    box-shadow: 0 0 15px rgba(20, 184, 166, 0.3);
-}
-
-.profile-top a:hover {
-    background: #2dd4bf;
-    box-shadow: 0 0 25px rgba(45, 212, 191, 0.5);
-    transform: translateY(-1px);
-}
-
-.profile-top a:active {
-    transform: scale(0.98);
-}
-
-/* ==========================================
-   TABLA (Estilo Filas Flotantes Sci-Fi)
-   ========================================== */
-.table-container {
-    background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 25px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
-
-.tabla-equipos {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 8px;
-}
-
-.tabla-equipos th {
-    background: transparent;
-    color: #64748b;
-    padding: 12px 16px;
-    text-align: left;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.tabla-equipos tr td {
-    background: rgba(20, 30, 48, 0.3);
-    padding: 16px;
-    color: #e2e8f0;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-.tabla-equipos tr td:first-child { 
-    border-radius: 8px 0 0 8px; 
-    border-left: 1px solid rgba(255, 255, 255, 0.03); 
-}
-.tabla-equipos tr td:last-child { 
-    border-radius: 0 8px 8px 0; 
-    border-right: 1px solid rgba(255, 255, 255, 0.03); 
-}
-
-.tabla-equipos tr:hover td {
-    background: rgba(20, 184, 166, 0.06);
-    color: #fff;
-    border-top: 1px solid rgba(20, 184, 166, 0.15);
-    border-bottom: 1px solid rgba(20, 184, 166, 0.15);
-}
-
 /* ==========================================
    STATUS BADGES 
    ========================================== */
@@ -252,16 +35,25 @@ body {
 .btn-delete,
 .btn-start-work,
 .btn-cancel-work,
-.btn-close-work {
+.btn-close-work,
+.btn-view-detail {
     border: none;
     background: none;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-edit, .btn-start-work { color: #64748b; font-size: 16px; margin-right: 10px; }
+.btn-edit, 
+.btn-start-work,
+.btn-view-detail { 
+    color: #64748b; 
+    font-size: 16px; 
+    margin-right: 10px; 
+}
+
 .btn-edit:hover, 
-.btn-start-work:hover {
+.btn-start-work:hover,
+.btn-view-detail:hover {
      color: #38bdf8; 
      filter: drop-shadow(0 0 8px #38bdf8); 
      transform: scale(1.15); 
@@ -278,7 +70,8 @@ body {
     transform: scale(1.15); 
 }
 
-.btn-delete, .btn-cancel-work { 
+.btn-delete, 
+.btn-cancel-work { 
     color: #64748b; 
     font-size: 16px; 
     margin-right: 10px; 
@@ -307,74 +100,40 @@ body {
     color: #f87171;
 }
 
-/* Componentes en línea obsoletos o alternos */
-.btn-sta-work, .btn-clo-work, .btn-can-work {
+
+.btn-add, 
+.btn-search{
+    display: flexbox ;
     font-family: inherit;
-    font-size: 12px;
+    font-size: 11;
     font-weight: 500;
-    padding: 6px 12px;
-    border: none;
-    background: rgba(255, 255, 255, 0.05);
-    color: #cbd5e1;
-    border-radius: 20px;
+    padding: 9px 15px;
+    border: 0.5px solid;
+    border-radius: 10px;
     cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
 }
 
-/* ==========================================
-   MODALES 
-   ========================================== */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(2, 6, 12, 0.8);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    justify-content: center;
-    align-items: center;
+.btn-add{
+    border: none;
+    background: #14b8a6; 
+    color: #042f2e;
+    margin-left: 83.9%;;
 }
 
-.modal-content {
-    background: #0f172a; 
-    border: 1px solid rgba(20, 184, 166, 0.3);
-    box-shadow: 0 0 30px rgba(20, 184, 166, 0.15);
-    width: 500px;
-    padding: 35px;
-    border-radius: 16px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    color: #f8fafc;
+.btn-search:first-child{
+    width: 30%;
+    color: #94A3B8;
+    background-color: rgba(15, 23, 42, 0.45);
+    border: 0.5px solid;
+    margin-right: 500px;
 }
 
-.modal-content form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-/* Inputs y Selects oscurecidos de alta tecnología */
-.modal-content input,
-.modal-content select {
-    background: #070b12;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #f8fafc;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-.modal-content input:focus,
-.modal-content select:focus {
-    outline: none;
-    border-color: #14b8a6;
-    box-shadow: 0 0 10px rgba(20, 184, 166, 0.2);
+.btn-add:hover {
+    background: #2dd4bf;
+    box-shadow: 0 0 25px rgba(45, 212, 191, 0.5);
+    transform: translateY(-1px);
 }
 
 /* Botón Submit del Modal */
@@ -394,6 +153,13 @@ body {
 .modal-content button[type="submit"]:hover {
     background-color: #2dd4bf;
     box-shadow: 0 0 25px rgba(45, 212, 191, 0.4);
+}
+
+.modal-inf{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    font-size: 14px;
 }
 
 .close {

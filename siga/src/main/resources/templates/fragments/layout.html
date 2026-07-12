@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" 
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <title th:text="${title}">SIGA</title>
@@ -8,44 +10,68 @@
 <body>
 
     <div th:fragment="sidebar(activePage)" class="sidebar">
+        <button type="button" class="btn-toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left icon-toggle"></i>
+        </button>
+
         <div class="logo">
-            <img src="../img/logo_siga.png" alt="SIGA">
+            <img src="../img/logo.png" alt="SIGA">
         </div>
 
         <nav>
             <a th:class="${activePage == 'dashboard' ? 'active' : ''}" href="/dashboard">
-                <i class="fas fa-chart-line"></i> Dashboard
+                <i class="fas fa-chart-line"></i> <span>Dashboard</span>
             </a>
             <a th:class="${activePage == 'equipment' ? 'active' : ''}" href="/equipment">
-                <i class="fas fa-laptop"></i> Equipos
+                <i class="fas fa-laptop"></i> <span>Equipos</span>
             </a>
             <a th:class="${activePage == 'rental' ? 'active' : ''}" href="/rental">
-                <i class="fas fa-file-signature"></i> Alquileres
+                <i class="fas fa-file-signature"></i> <span>Alquileres</span>
             </a>
             <a th:class="${activePage == 'maintenance' ? 'active' : ''}" href="/maintenance">
-                <i class="fas fa-tools"></i> Mantenimiento
+                <i class="fas fa-tools"></i> <span>Mantenimiento</span>
             </a>
             <a th:class="${activePage == 'monitoring' ? 'active' : ''}" href="/monitoring">
-                <i class="fas fa-satellite-dish"></i> Monitoreo
+                <i class="fas fa-satellite-dish"></i> <span>Monitoreo</span>
             </a>
-            <a th:class="${activePage == 'reports' ? 'active' : ''}" href="#">
-                <i class="fas fa-chart-bar"></i> Reportes
+            <a th:class="${activePage == 'report' ? 'active' : ''}" th:href="@{/monitoring/reports}">
+                <i class="fas fa-chart-bar"></i> <span>Reportes</span>
             </a>
         </nav>
 
-        <div class="user-info">
-            <i class="fas fa-user-circle"></i>
-            <div>
-                <strong th:text="${#authentication.name}">Administrador</strong>
-                
-                <p th:text="${#strings.replace(#authentication.authorities[0].authority, 'ROLE_', '')}"></p>
-            </div>
-
-            <form th:action="@{/logout}" method="post">
-                <button type="submit" class="btn-logout">
-                    <i class="fas fa-right-from-bracket"></i>
+        <div class="nav-system">
+            <hr class="sidebar-divider">
+            <button type="button" onclick="window.location.href='/settings'" class="btn-settings">
+                <i class="fas fa-gear"></i> <span>Configuración</span>
+            </button>
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="nav-logout-btn">
+                    <i class="fas fa-right-from-bracket"></i> <span>Cerrar Sesión</span>
                 </button>
             </form>
+        </div>
+    </div>
+
+    <div th:fragment="header" class="header" sec:authorize="isAuthenticated()">
+        <div class="profile-top">
+            <div class="user-pill">
+                <img src="../img/avatar-default.png" alt="User Avatar" class="user-avatar">
+                <div class="user-info-text">
+                    <span class="user-name" sec:authentication="name">Usuario</span>
+                    
+                    <span class="user-role">
+                        <th:block th:each="authority : ${#authentication.authorities}">
+                            <span th:switch="${authority.authority}" th:remove="tag">
+                                <span th:case="'ROLE_ADMIN'" th:remove="tag">Administrador</span>
+                                <span th:case="'ROLE_OWNER'" th:remove="tag">Propietario</span>
+                                <span th:case="'ROLE_USER'" th:remove="tag">Operador</span>
+                                <span th:case="'ROLE_MECHANIC'" th:remove="tag">Mecanico</span>
+                                <span th:case="*" th:remove="tag" th:text="${authority.authority}">Usuario</span>
+                            </span>
+                        </th:block>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 

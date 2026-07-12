@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Eficiencia Operativa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/report.css">
+</head>
+<body>
+
+    <div th:replace="~{fragments/layout :: sidebar('report')}"></div>
+
+    
+
+    <div class="content">
+
+        <div class="header">
+            <div class="titles">
+                <h1><i class="fa-solid fa-chart-line text-esmeralda"></i> Eficiencia Operativa y Productividad</h1>
+                <p>Análisis integral de rendimiento del personal, tiempos de respuesta y auditoría de incidencias.</p>
+            </div>
+            <div th:replace="~{fragments/layout :: header}"></div>
+        </div>
+        <!--
+        <div class="report-header-box">
+            <div class="export-actions">
+                <button class="btn-export pdf"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                <button class="btn-export excel"><i class="fa-solid fa-file-excel"></i> Exportar Excel</button>
+            </div>
+        </div>
+        -->
+  
+        <form th:action="@{/monitoring/reports}" method="GET" class="filter-bar">
+            <div class="filter-group">
+                <label>Rango de Fechas:</label>
+                <div class="date-inputs">
+                    <input type="date" name="startDate" class="input-dark" th:value="${startDate}">
+                    <span style="color: #64748b;">al</span>
+                    <input type="date" name="endDate" class="input-dark" th:value="${endDate}">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>Filtrar por Operador:</label>
+                <select name="operatorName" class="select-dark" style="min-width: 200px;">
+                    <option value="">Todos los operadores</option>
+                    <option th:each="op : ${listaOperadores}" 
+                            th:value="${op}" 
+                            th:text="${op}"
+                            th:selected="${op == param.operatorName}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn-filter-apply"><i class="fa-solid fa-filter"></i> Procesar Reporte</button>
+        </form>
+
+        <div class="report-kpi-grid">
+            <div class="kpi-mod-card">
+                <div class="kpi-mod-badge"><i class="fa-solid fa-crown text-amber"></i></div>
+                <div class="kpi-mod-info">
+                    <h3>Top Performer</h3>
+                    <h2 th:text="${topOperator}">Carlos Mendoza</h2>
+                    <p th:text="${topOperatorCount + ' Alquileres finalizados'}">45 Alquileres</p>
+                </div>
+            </div>
+
+            <div class="kpi-mod-card">
+                <div class="kpi-mod-badge"><i class="fa-solid fa-clock-rotate-left text-alerta"></i></div>
+                <div class="kpi-mod-info">
+                    <h3>Alquileres Pendientes</h3>
+                    <h2 class="kpi-value" th:text="${totalPendientes}">0</h2>
+                    <p class="kpi-subtext">Servicios activos en campo</p>
+                </div>
+            </div>
+
+            <div class="kpi-mod-card">
+                <div class="kpi-mod-badge"><i class="fa-solid fa-bell text-warning"></i></div>
+                <div class="kpi-mod-info">
+                    <h3>Tasa de Observaciones</h3>
+                    <h2 th:text="${tasaIncidencias + '%'}">8.4%</h2>
+                    <p class="text-warning"><i class="fa-solid fa-circle-exclamation"></i> Requieren auditoría</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-panel-box">
+            <h3><i class="fa-solid fa-users-gear text-esmeralda"></i> Rendimiento Agrupado por Personal</h3>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Operador</th>
+                        <th>Alquileres Iniciados</th>
+                        <th>Alquileres Finalizados</th>
+                        <th>Total Movilizado</th>
+                        <th style="text-align: center;">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <th:block th:each="row, iterStat : ${reportData}">
+                        <tr class="row-master-operator">
+                            <td>
+                                <div class="user-profile-cell">
+                                    <div class="avatar-mini" th:text="${#strings.substring(row.operatorName,0,2).toUpperCase()}">OP</div>
+                                    <div>
+                                        <strong th:text="${row.operatorName}">Nombre Operador</strong>
+                                        <span class="sub-label">Personal Autorizado</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${row.totalIniciados}">50</td>
+                            <td><span class="text-esmeralda" th:text="${row.totalFinalizados}">45</span></td>
+                            <td><strong th:text="${'S/ ' + #numbers.formatDecimal(row.totalMonto, 1, 2)}">S/ 12,450.00</strong></td>
+                            <td style="text-align: center;">
+                                <button class="btn-toggle-row" th:onclick="'toggleDetails(' + ${iterStat.index} + ')'">
+                                    <i th:id="'icon-' + ${iterStat.index}" class="fa-solid fa-chevron-down"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:id="'detail-' + ${iterStat.index}" class="row-detail-child">
+                            <td colspan="5">
+                                <div class="child-table-wrapper">
+                                    <h4>Historial de operaciones detalladas en este periodo</h4>
+                                    <table class="child-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID Transacción</th>
+                                                <th>Cliente</th>
+                                                <th>Fecha Registro</th>
+                                                <th>Estado</th>
+                                                <th>Observaciones registradas en el cierre</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="rental : ${row.rentalHistory}">
+                                                <td th:text="${'#ALQ-' + rental.id}">#ALQ-2041</td>
+                                                <td th:text="${rental.customerName}">Cliente SA</td>
+                                                <td th:text="${#temporals.format(rental.date, 'dd/MM/yyyy')}">02/07/2026</td>
+                                                <td>
+                                                    <span class="badge-status" 
+                                                          th:classappend="${rental.status == 'FINALIZADO'} ? 'finalizado' : 'pendiente'"
+                                                          th:text="${rental.status}">FINALIZADO</span>
+                                                </td>
+                                                <td style="max-width: 400px; color: #94a3b8;" th:text="${rental.observaciones != null ? rental.observaciones : 'Sin observaciones registradas.'}">Observación...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<script src="/js/report.js"></script>
+</body>
+</html>

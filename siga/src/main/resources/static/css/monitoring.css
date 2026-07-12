@@ -1,314 +1,193 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
+/* Rejilla de Tarjetas Superiores */
+.monitor-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
-body{
-    display:flex;
-    min-height:100vh;
-    background:linear-gradient(white, lightgray, white);
-}
-
-/* ==========================
-   SIDEBAR
-========================== */
-
-.sidebar{
-    width:240px;
-    height:100vh;
-    background:#07142c;
-    color:white;
-    position:fixed;
-    left:0;
-    top:0;
-    display:flex;
-    flex-direction:column;
-}
-
-.logo{
-    text-align:center;
-    padding:20px;
-}
-
-.logo img{
-    width:130px;
-}
-
-.logo h2{
-    margin-top:10px;
-}
-
-.sidebar nav{
-    flex:1;
-}
-
-.sidebar nav a{
+.kpi-card {
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 22px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 15px 20px;
-    text-decoration: none;
-    color: #fff;
+    gap: 18px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Colores de acento para KPIs del Negocio */
+.kpi-card.effective-sale { border-left: 4px solid #14b8a6; }
+.kpi-card.pending-sale { border-left: 4px solid #eab308; }  
+.kpi-card.active-assets { border-left: 4px solid #38bdf8; } 
+
+.kpi-icon {
+    font-size: 26px;
+    color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
     border-radius: 10px;
-    transition: 0.3s;
 }
 
-.sidebar nav a:hover{
-    background:#17335f;
+.kpi-data h3 {
+    font-size: 12px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.sidebar nav a.active{
-    background: #07142c;
-    color: goldenrod;
-    font-weight: bold;
-    border-left: 4px solid goldenrod;
+.kpi-data p {
+    font-size: 22px;
+    font-weight: 600;
+    color: #f8fafc;
+    margin-top: 3px;
 }
 
-.user-info{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:20px;
-    border-top:1px solid rgba(255,255,255,0.1);
+.kpi-subtext {
+    font-size: 11px;
+    color: #eab308;
+    display: block;
+    margin-top: 2px;
 }
 
-.user-info i{
-    font-size:40px;
+/* Distribución Central de Paneles 50/50 */
+.monitor-center-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 25px;
+    margin-bottom: 25px;
 }
 
-/* ==========================
-   CONTENIDO
-========================== */
-
-.content{
-    margin-left:260px;
-    width:calc(100% - 260px);
-    padding:30px;
+.monitor-panel-box {
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    padding: 25px;
 }
 
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
+.monitor-panel-box h2 {
+    font-size: 16px;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.header h1{
-    color:#07142c;
-    margin-bottom:5px;
+.divider-sm {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin: 15px 0;
 }
 
-.header span{
-    color:#666;
+/* Barras de Progreso Técnicas */
+.metric-progress-wrapper {
+    margin-top: 18px;
 }
 
-.profile-top{
-    display:flex;
-    align-items:center;
-    gap:20px;
+.metric-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 6px;
 }
 
-.profile-top i{
-    font-size:20px;
-    cursor:pointer;
+.progress-bg {
+    background: rgba(7, 11, 18, 0.8);
+    width: 100%;
+    height: 8px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.02);
 }
 
-.profile-top a{
-    text-decoration:none;
-    background:#2563eb;
-    color:white;
-    padding:10px 18px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    transition:.3s;
+.progress-fill { 
+    height: 100%; 
+    border-radius: 20px; 
 }
 
-.profile-top a:hover{
-    background:#1d4ed8;
+.fill-esmeralda { 
+    background: #14b8a6;
+    box-shadow: 0 0 10px rgba(20, 184, 166, 0.4); 
 }
 
-/* CARDS */
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
+.fill-blue { 
+    background: #38bdf8; 
 }
 
-.card{
-    background:white;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
+/* Estados de Flota */
+.fleet-status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
-.card h3{
-    font-size:18px;
-    margin-bottom:10px;
+.fleet-stat-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #e2e8f0;
 }
 
-.card span{
-    font-size:45px;
-    font-weight:bold;
-    color:#07142c;
+.circle-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 12px;
 }
 
-/* ==========================
-   MONITORING GRID
-========================== */
-
-.monitor-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
+.bg-success { 
+    background-color: #14b8a6; 
+    box-shadow: 0 0 8px #14b8a6; 
 }
 
-.panel{
-    background:white;
-    margin-top: 60px;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
+.bg-warning { 
+    background-color: #eab308; 
+    box-shadow: 0 0 8px #eab308; 
 }
 
-.panel h2{
-    margin-bottom:15px;
-    color:#07142c;
+.bg-danger { 
+    background-color: #f87171; 
+    box-shadow: 0 0 8px #f87171; 
 }
 
-/* ==========================
-   TABLA
-========================== */
+.fleet-label { flex: 1; color: #94a3b8; }
 
-.table-container{
-    background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
-    overflow-x:auto;
+.alert-box-monitor {
+    background: rgba(234, 179, 8, 0.06);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #fde047;
 }
 
-.tabla-equipos{
-    width:100%;
-    border-collapse:collapse;
+/* Colores de Trazas de Logs */
+.log-line.log-info { 
+    color: #a7f3d0; 
+} /* Verde claro */
+.log-line.log-warn {
+    color: #fde047; 
+} /* Amarillo */
+.log-line.log-error { 
+    color: #f87171; 
+    font-weight: 600; 
+} /* Rojo */
+
+.text-esmeralda { 
+    color: #14b8a6; 
 }
-
-.tabla-equipos th{
-    background: linear-gradient(whitesmoke, lightgray) ;
-    color:black;
-    padding:15px;
-    text-align:left;
-}
-
-.tabla-equipos td{
-    padding:15px;
-    border-bottom:1px solid #e5e7eb;
-}
-
-.tabla-equipos tr:hover{
-    background:#f8fafc;
-}
-
-/* ==========================
-   BOTONES
-========================== */
-
-.btn-edit,
-.btn-delete{
-    border:none;
-    background:none;
-    cursor:pointer;
-    font-size:16px;
-    margin-right:10px;
-}
-
-.btn-edit{
-    color:#2563eb;
-}
-
-.btn-delete{
-    color:#dc2626;
-}
-
-.btn-edit:hover,
-.btn-delete:hover{
-    transform:scale(1.1);
-}
-
-.btn-logout{
-    background:none;
-    border:none;
-    color:white;
-    cursor:pointer;
-    font-size:12px;
-    padding:15px;
-}
-
-.btn-logout i{
-    font-size: 20px;
-}
-
-.btn-logout:hover{
-    color:#ff6b6b;
-}
-
-
-
-/* Fondo oscuro */
-.modal{
-    display:none;
-    position:fixed;
-    z-index:999;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,.5);
-
-    justify-content:center;
-    align-items:center;
-}
-
-/* Caja del formulario */
-.modal-content{
-    background:white;
-    width:500px;
-    padding:30px;
-    border-radius:12px;
-    position:relative;
-
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-.modal-content form{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.modal-content input{
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
-}
-
-.modal-content button{
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-.close{
-    position:absolute;
-    top:10px;
-    right:15px;
-    font-size:25px;
-    cursor:pointer;
+.badge-success { 
+    background: rgba(20, 184, 166, 0.1); 
+    color: #2dd4bf; 
+    border: 1px solid rgba(20, 184, 166, 0.2); 
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    font-size: 11px; 
 }

@@ -23,7 +23,7 @@ public class AuthController {
             @RequestParam String username,
             @RequestParam String correo,
             @RequestParam String password,
-            @RequestParam String rol) { // <-- 1. Recibimos el rol del formulario
+            @RequestParam String rol) { 
 
         System.out.println("=== REGISTRO ===");
         System.out.println("Usuario: " + username);

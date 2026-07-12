@@ -14,4 +14,10 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
 
         // CONSULTA PARA EQUIPOS DE ESTADO ELIMINADO(AUDITORIA INTERNA)
         List<Equipment> findByStatusOrderByIdDesc(String status);
+
+        // Equipos operativos
+        Long countByStatusNot(String status);
+
+        // Cuenta cuántos están ocupados actualmente
+        Long countByStatus(String status);
 }

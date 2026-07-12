@@ -2,6 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments/layout :: head('SIGA Equipos')}"></div>
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/maintenance.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -16,16 +17,16 @@
             <h1>Mantenimientos</h1>
             <span>Gestión de mantenimiento</span>
         </div>
+        <div th:replace="~{fragments/layout :: header}"></div>
+    </div>
 
-        <div class="profile-top">
-            <i class="fa-regular fa-bell"></i>
-            <nav>
-                <button type="button" class="btn-add" onclick="abrirModal()">
-                    <i class="fas fa-plus"></i>
-                    Añadir Mantenimiento
-                </button>
-            </nav>
-        </div>
+    <div>
+        <nav>
+            <button type="button" class="btn-add" onclick="abrirModal()">
+                <i class="fas fa-plus"></i>
+                Añadir Mantenimiento
+            </button>
+        </nav>
     </div>
 
     <div id="modalMaintenace" class="modal">
@@ -64,6 +65,25 @@
         </div>
     </div>
 
+    <div id="modalCierre" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalCierre()">&times;</span>
+            <h2>Finalizar Mantenimiento</h2>
+            <form id="formCierre" method="post">
+                <label>Monto total a Cobrar:</label>
+                <input type="number" step="0.01" name="cost" placeholder="Ej. 250.00" required>
+
+                <label>Observaciones:</label>
+                <input type="text" name="observations" placeholder="Observaciones del servicio" required>
+
+                <label>Proximo Mantenimiento:</label>
+                <input type="number" step="0.10" name="nextMaintenanceUsage" placeholder="Ej. 500.00">
+
+                <button type="submit" style="background-color: #28a745;">Procesar Mantenimiento</button>
+            </form>
+        </div>
+    </div>
+
     <div class="table-container">
         <table class="tabla-equipos">
             <thead>
@@ -85,7 +105,7 @@
                 <td th:text="${maintenance.type}"></td>
                 <td th:text="${maintenance.entryDate != null ? #temporals.format(maintenance.entryDate, 'dd-MM-yyyy') : 'Pendiente (Planificado)'}"></td>
                 <td th:text="${maintenance.usageIndicator + ' hrs'}"></td>
-                <td th:text="${maintenance.cost != null ? '$' + #numbers.formatDecimal(maintenance.cost, 1, 2) : ' '}"></td>
+                <td th:text="${maintenance.cost != null ? 'S/ ' + #numbers.formatDecimal(maintenance.cost, 1, 2) : ' '}"></td>
                 <td>
                     <span th:text="${maintenance.status}" 
                           th:class="'status ' + ${#strings.toLowerCase(#strings.replace(maintenance.status, ' ', '-'))}">
@@ -109,14 +129,18 @@
                         </th:block>
 
                         <th:block th:if="${maintenance.status == 'En Mantenimiento'}">
-                            <form th:action="@{/maintenance/close/{id}(id=${maintenance.id})}" method="post">
-                                <button type="submit" class="btn-close-work" title="Completar y dar Salida">
-                                    <i class="bi bi-check-circle-fill"></i> 
-                                </button>
-                            </form>
+                            <button type="button" class="btn-close-work" title="Completar y dar Salida" 
+                                    th:onclick="'abrirModalCierre(' + ${maintenance.id} + ')'">
+                                <i class="bi bi-check-circle-fill"></i> 
+                            </button>
                         </th:block>
                         
                     </div>
+
+                    <button class="btn-view-detail" title="Ver detalle completo"
+                            th:onclick="'verDetalleMantenimiento(' + ${maintenance.id} + ')'">
+                        <i class="bi bi-eye-fill"></i>
+                    </button>
 
                     <button class="btn-delete" th:onclick="'eliminarMantenimiento(' + ${maintenance.id} + ')'" title="Eliminar del Historial">
                         <i class="fas fa-trash"></i>
@@ -125,6 +149,36 @@
             </tr>
             </tbody>
         </table>
+    </div>
+
+    <div id="modalDetalle" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModalDetalle()">&times;</span>
+            <h2 class="modal-divider">
+                <i class="bi bi-file-earmark-text"></i> Ficha de Mantenimiento #<span id="detId"></span>
+            </h2>
+            
+            <div class="modal-inf">
+                <div><strong>Código de Equipo:</strong> <span id="detEquipo"></span></div>
+                <div><strong>Tipo de Servicio:</strong> <span id="detTipo" style="font-weight: bold;"></span></div>
+                <div><strong>Fecha de Ingreso:</strong> <span id="detIngreso"></span></div>
+                <div><strong>Fecha de Salida:</strong> <span id="detSalida"></span></div>
+                <div><strong>Horómetro de Ingreso:</strong> <span id="detHorometro"></span></div>
+                <div><strong>Próximo Horómetro:</strong> <span id="detProximo"></span></div>
+                <div><strong>Costo Total:</strong> <span id="detCosto" style="color: #28a745; font-weight: bold;"></span></div>
+                <div><strong>Estado Actual:</strong> <span id="detEstado"></span></div>
+            </div>
+
+            <div style="margin-top: 20px; background-color: #11141d; padding: 12px; border-radius: 6px;">
+                <h4 style="margin-top: 0; color: #17a2b8;">Motivo de Ingreso:</h4>
+                <p id="detDescripcion" style="margin: 0; font-style: italic; color: #ccc;"></p>
+            </div>
+
+            <div style="margin-top: 15px; background-color: #11141d; padding: 12px; border-radius: 6px;">
+                <h4 style="margin-top: 0; color: #ffc107;">Observaciones de Salida:</h4>
+                <p id="detObservaciones" style="margin: 0; font-style: italic; color: #ccc;"></p>
+            </div>
+        </div>
     </div>
 </div>
 

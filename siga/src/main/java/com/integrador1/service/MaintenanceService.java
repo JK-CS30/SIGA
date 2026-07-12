@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MaintenanceService {
@@ -22,10 +23,18 @@ public class MaintenanceService {
         this.equipmentRepository = equipmentRepository;
     }
 
+    public Optional<Maintenance> findById(Long id){
+        return maintenanceRepository.findById(id);
+    }
+        
+    public List<Maintenance> findByEquipmentId(Long equipmentId){
+        return maintenanceRepository.findByEquipmentId(equipmentId);
+    }
+
     @Transactional
     public Maintenance registerMaintenance(Maintenance maintenance){
         if (maintenance.getCost() == null) {
-            maintenance.setCost(java.math.BigDecimal.ZERO);
+            maintenance.setCost(0.00);
         }
         
         maintenance.setEntryDate(LocalDate.now()); 
@@ -54,9 +63,12 @@ public class MaintenanceService {
     }
 
     @Transactional
-    public void closeMaintenance(Long id){
+    public void closeMaintenance(Long id, Double cost, String observations, double nextMaintenanceUsage){
         Maintenance maintenance = getMaintenance(id);
         maintenance.setExitDate(LocalDate.now());
+        maintenance.setCost(cost);
+        maintenance.setObservations(observations);
+        maintenance.setNextMaintenanceUsage(nextMaintenanceUsage);
         maintenance.setStatus("Completado"); 
         maintenanceRepository.save(maintenance);
 
@@ -113,7 +125,7 @@ public class MaintenanceService {
         
         // Al actualizar, si mandan un costo nulo, le asignamos cero
         if (maintenance.getCost() == null) {
-            existing.setCost(java.math.BigDecimal.ZERO);
+            existing.setCost(0.00);
         } else {
             existing.setCost(maintenance.getCost());
         }
@@ -132,4 +144,7 @@ public class MaintenanceService {
         return maintenanceRepository.countByStatus("En Mantenimiento");
     }
 
+    public long countByTypeAndStatus(String type, String status) {
+        return maintenanceRepository.countByTypeAndStatus(type, status);
+    }
 }

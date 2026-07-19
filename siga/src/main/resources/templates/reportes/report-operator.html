@@ -31,11 +31,11 @@
         </div>
         -->
   
-        <form th:action="@{/monitoring/reports}" method="GET" class="filter-bar">
+        <form th:action="@{/reports/grafic}" method="GET" class="filter-bar">
             <div class="filter-group">
                 <label>Rango de Fechas:</label>
                 <div class="date-inputs">
-                    <input type="date" name="startDate" class="input-dark" th:value="${startDate}">
+                    <input type="date" name="startDate" class="input-dark" th:value="${startDate} " >
                     <span style="color: #64748b;">al</span>
                     <input type="date" name="endDate" class="input-dark" th:value="${endDate}">
                 </div>
@@ -79,6 +79,28 @@
                     <h2 th:text="${tasaIncidencias + '%'}">8.4%</h2>
                     <p class="text-warning"><i class="fa-solid fa-circle-exclamation"></i> Requieren auditoría</p>
                 </div>
+            </div>
+        </div>
+
+        <div class="charts-dashboard-grid">
+            <div class="chart-card-box long-chart">
+                <h4><i class="fa-solid fa-chart-line text-esmeralda"></i> Evolución de Ingresos Anuales (S/)</h4>
+                <canvas id="chartIngresosMensuales"></canvas>
+            </div>
+
+            <div class="chart-card-box">
+                <h4><i class="fa-solid fa-chart-bar text-celeste"></i> Dinero Movilizado por Operador</h4>
+                <canvas id="chartProductividad"></canvas>
+            </div>
+
+            <div class="chart-card-box">
+                <h4><i class="fa-solid fa-scale-balanced text-warning"></i> Margen Financiero: Bruto vs Neto</h4>
+                <canvas id="chartBrutoVsNeto"></canvas>
+            </div>
+
+            <div class="chart-card-box">
+                <h4><i class="fa-solid fa-screwdriver-wrench text-alerta"></i> Top 5: Equipos con Mayor Gasto de Reparación</h4>
+                <canvas id="chartGastoMantenimiento"></canvas>
             </div>
         </div>
 
@@ -152,6 +174,20 @@
         </div>
     </div>
 
-<script src="/js/report.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script th:inline="javascript">
+    window.ingresosMesesData = /*[[${ingresosMeses}]]*/ [];
+    window.labelsOperadoresData = /*[[${labelsOperadores}]]*/ [];
+    window.montosOperadoresData = /*[[${montosOperadores}]]*/ [];
+    window.labelsEquiposMantData = /*[[${labelsEquiposMant}]]*/ [];
+    window.costosEquiposMantData = /*[[${costosEquiposMant}]]*/ [];
+    
+    // Mapeo corregido para el gráfico doble:
+    window.datosBrutoData = /*[[${datosBruto}]]*/ [];
+    window.datosNetoData = /*[[${datosNeto}]]*/ [];
+</script>
+
+<script th:src="@{/js/report.js}"></script>
 </body>
 </html>

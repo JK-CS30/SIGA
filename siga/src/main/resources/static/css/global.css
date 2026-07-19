@@ -353,17 +353,19 @@ body {
 
 .modal-content form { display: flex; flex-direction: column; gap: 14px; }
 
-.modal-content input, .modal-content select {
+.modal-content input, 
+.modal-content select {
     background: #070b12;
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #f8fafc;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 8px; /* Consistencia exacta en esquinas */
     font-size: 14px;
     width: 100%;
+    box-sizing: border-box;
     transition: all 0.2s ease;
+    font-family: inherit;
 }
-
 .modal-content input:focus,
 .modal-content select:focus {
     outline: none;

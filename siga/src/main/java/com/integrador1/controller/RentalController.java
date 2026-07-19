@@ -55,10 +55,16 @@ public class RentalController {
 
     @PostMapping("/rental/save")
     public String saveRental(Rental rental, Authentication authentication){
-        Boolean isOwner = authentication != null && authentication.getAuthorities().contains(new SimpleGrantedAuthority("OWNER"));
-        if (!isOwner || rental.getDate() == null){
+        Boolean hasPermission = authentication != null && 
+            (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_OWNER")) ||
+             authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) ||
+             authentication.getAuthorities().contains(new SimpleGrantedAuthority("OWNER")) ||
+             authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN")));
+
+        if (!hasPermission || rental.getDate() == null){
             rental.setDate(LocalDate.now());
         }
+        
         rentalService.registerRental(rental);
         return "redirect:/rental";
     }
@@ -67,15 +73,34 @@ public class RentalController {
     public String closeRental(@PathVariable Long id, 
                                @RequestParam Double totalAmount,
                                @RequestParam String paymentMethod,
+                               @RequestParam(required = false, defaultValue = "false") Boolean facturado,
                                @RequestParam(required = false) String collectionsResponsible,
                                @RequestParam(required = false) String observaciones){
-        rentalService.closeRental(id, totalAmount, paymentMethod, collectionsResponsible, observaciones);
+        
+        Rental rental = rentalService.getRental(id);
+
+        rental.calcularMontosFinancieros(totalAmount, facturado);
+
+        rentalService.closeRental(id, rental.getTotalAmount(), rental.getBrutoAmount(), rental.isFacturado(), paymentMethod, collectionsResponsible, observaciones);
         return "redirect:/rental";
     }
 
     @PostMapping("/rental/confirm-deposit/{id}")
-    public String confirmDeposit(@PathVariable Long id) {
-        rentalService.confirmDeposit(id);
+    public String confirmDeposit(@PathVariable Long id,
+                                 @RequestParam("montoFinal")BigDecimal montoFinal,
+                                 @RequestParam(value = "observacionesAjuste", required = false) String observacionesAjuste) {
+
+        Rental rental = rentalService.getRental(id);
+
+        rental.calcularMontosFinancieros(montoFinal.doubleValue(), rental.isFacturado());
+        
+        if (observacionesAjuste != null && !observacionesAjuste.isBlank()) {
+            rental.setObservaciones(rental.getObservaciones() + " | Ajuste: " + observacionesAjuste);
+        }
+        
+        rental.setStatus("FINALIZADO");
+        rentalService.updateRental(id, rental);
+        
         return "redirect:/rental";
     }
 

@@ -1,11 +1,14 @@
-/* ===== FUNCIONES DE GESTIÓN DE MODALES ===== */
-
+// ==========================================
+// ACCIONES DE LA INTERFAZ / SIDEBAR
+// ==========================================
 function toggleSidebar() {
     const body = document.body;
     body.classList.toggle('sidebar-collapsed');
 }
 
-// Modal de Creación
+// ==========================================
+// MODAL DE CREACIÓN
+// ==========================================
 function abrirModalCrear() { 
     document.getElementById('modalRental').style.display = 'flex'; 
 }
@@ -13,18 +16,59 @@ function cerrarModalCrear() {
     document.getElementById('modalRental').style.display = 'none'; 
 }
 
-// Modal de Cierre (Liquidación)
-function abrirModalCierre(id) {
+// ==========================================
+// MODAL DE CIERRE (LIQUIDACIÓN)
+// ==========================================
+function abrirModalCierre(id, montoBase = null) {
     var form = document.getElementById('formCierre');
     form.action = '/rental/close/' + id;
+    
+    var inputMonto = document.getElementById('inputMontoTotal');
+    if (inputMonto) {
+        
+        if (montoBase !== null && montoBase !== undefined) {
+            inputMonto.value = parseFloat(montoBase).toFixed(2);
+        } else {
+            inputMonto.value = ''; 
+        }
+        
+        // Escuchar cambios por si el usuario escribe manualmente
+        inputMonto.addEventListener('input', calcularImpuestos);
+    }
+    
+    // Limpiamos el checkbox para que empiece desmarcado
+    var chkFacturado = document.getElementById('chkFacturado');
+    if (chkFacturado) {
+        chkFacturado.checked = false;
+    }
+    
     document.getElementById('modalCierre').style.display = 'flex';
+    calcularImpuestos(); // Oculta el desglose inicialmente
 }
 
-function cerrarModalCierre() {
-    document.getElementById('modalCierre').style.display = 'none';
-    document.getElementById('formCierre').reset();
-    document.getElementById('divResponsable').style.display = 'none';
-    document.getElementById('inputResponsable').required = false;
+// Lógica para calcular subtotal, IGV y Total Neto en tiempo real
+function calcularImpuestos() {
+    const chkFacturado = document.getElementById('chkFacturado');
+    const divDesglose = document.getElementById('divDesglose');
+    const inputMonto = document.getElementById('inputMontoTotal');
+    
+    if (!inputMonto || !divDesglose) return;
+
+    let monto = parseFloat(inputMonto.value) || 0;
+
+    if (chkFacturado && chkFacturado.checked) {
+        let subtotal = monto;
+        let igv = monto * 0.18;
+        let totalFinal = subtotal + igv;
+
+        document.getElementById('txtSubtotal').innerText = `S/ ${subtotal.toFixed(2)}`;
+        document.getElementById('txtIGV').innerText = `S/ ${igv.toFixed(2)}`;
+        document.getElementById('txtTotalFinal').innerText = `S/ ${totalFinal.toFixed(2)}`;
+        
+        divDesglose.style.display = 'block';
+    } else {
+        divDesglose.style.display = 'none';
+    }
 }
 
 // Lógica para mostrar/ocultar encargado según método de pago
@@ -43,7 +87,9 @@ function evaluarMetodoPago() {
     }
 }
 
-// Modal de Confirmación Financiera
+// ==========================================
+// MODAL DE CONFIRMACIÓN FINANCIERA
+// ==========================================
 function abrirModalConfirmacion(id, montoActual, tipo) {
     const modal = document.getElementById('modalConfirmacionFinanciera');
     const form = document.getElementById('formConfirmacionFinanciera');
@@ -67,7 +113,9 @@ function cerrarModalConfirmacion() {
     document.getElementById('modalConfirmacionFinanciera').style.display = 'none';
 }
 
-// Modal de Detalle
+// ==========================================
+// MODAL DE DETALLE (FETCH API)
+// ==========================================
 function verDetalleRental(id) {
     fetch('/rental/detail/' + id)
         .then(response => {
@@ -93,7 +141,9 @@ function verDetalleRental(id) {
             // Valores
             document.getElementById('rentDescripcion').innerText = r.serviceDescription || 'Sin descripción';
             document.getElementById('rentObservaciones').innerText = r.observaciones || 'Sin observaciones';
-            document.getElementById('rentMonto').innerText = '$' + parseFloat(r.totalAmount || 0).toFixed(2);
+            
+            // Corregido: Unificado a Soles Peruanos (S/) en lugar de símbolo de Dólar ($)
+            document.getElementById('rentMonto').innerText = 'S/ ' + parseFloat(r.brutoAmount || 0).toFixed(2);
 
             document.getElementById('modalDetalle').style.display = 'flex';
         })
@@ -104,7 +154,9 @@ function cerrarModalDetalle() {
     document.getElementById('modalDetalle').style.display = 'none';
 }
 
-// Eliminación
+// ==========================================
+// ACCIONES DE ELIMINACIÓN
+// ==========================================
 function eliminarRental(id) {
     if (confirm("¿Seguro que deseas eliminar este alquiler?")) {
         fetch(`/rental/delete/${id}`, { method: "DELETE" })

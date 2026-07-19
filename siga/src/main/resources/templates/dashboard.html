@@ -60,46 +60,34 @@
         </div>
     </div>
 
-    <div class="dashboard-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 25px;">
-        
-        <div class="table-container">
-            <h3>Control de Operaciones Críticas</h3>
-            </div>
-
-        <div class="table-container">
-            <h3>Aprobaciones Pendientes</h3>
-            </div>
-</div>
-
-    <div class="middle">
-        <div class="panel">
-            <h2>Estado de Equipos</h2>
-            <div class="chart-placeholder">
-                <i class="fas fa-chart-pie"></i>
+    <div class="charts-dashboard-grid">
+    
+        <div class="chart-card-box long-chart">
+            <h4><i class="fa-solid fa-chart-line text-celeste"></i> Evolución de Ingresos Mensuales</h4>
+            <div style="position: relative; height: calc(100% - 35px); width: 100%;">
+                <canvas id="chartIngresosMensuales"></canvas>
             </div>
         </div>
-        <div class="panel">
-            <h2>Próximos Mantenimientos</h2>
-            <ul>
-                <li>Montacarga TOYOTA GM-0003</li>
-                <li>Grupo Electrógeno GE-0001</li>
-                <li>Camioneta GC-0010</li>
-            </ul>
+
+        <div class="chart-card-box">
+            <h4><i class="fa-solid fa-scale-balanced text-warning"></i> Margen Financiero: Bruto vs Neto</h4>
+            <div style="position: relative; height: calc(100% - 35px); width: 100%;">
+                <canvas id="chartBrutoVsNeto"></canvas>
+            </div>
         </div>
-    </div>
 
-    <div class="panel activity">
-        <h2>Actividad Reciente</h2>
-        <table>
-            <tr th:each="m : ${maintenances}">
-                <td th:text="${m.equipment.code}"></td>
-                <td th:text="${m.type}"></td>
-                <td th:text="${m.entryDate}"></td>
-            </tr>
-        </table>
     </div>
+    
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script th:inline="javascript">
+    window.ingresosMesesData = /*[[${ingresosMeses}]]*/ [];
+    window.datosBrutoData = /*[[${datosBruto}]]*/ [];
+    window.datosNetoData = /*[[${datosNeto}]]*/ [];
+</script>
+
+<script th:src="@{/js/report.js}"></script>
 <script src="/js/dashboard.js"></script>
 </body>
 </html>

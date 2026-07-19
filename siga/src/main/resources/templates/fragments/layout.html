@@ -31,12 +31,14 @@
             <a th:class="${activePage == 'maintenance' ? 'active' : ''}" href="/maintenance">
                 <i class="fas fa-tools"></i> <span>Mantenimiento</span>
             </a>
-            <a th:class="${activePage == 'monitoring' ? 'active' : ''}" href="/monitoring">
-                <i class="fas fa-satellite-dish"></i> <span>Monitoreo</span>
-            </a>
-            <a th:class="${activePage == 'report' ? 'active' : ''}" th:href="@{/monitoring/reports}">
-                <i class="fas fa-chart-bar"></i> <span>Reportes</span>
-            </a>
+            <div sec:authorize="hasAnyRole('ADMIN', 'OWNER')">
+                <a th:class="${activePage == 'monitoring' ? 'active' : ''}" href="/monitoring">
+                    <i class="fas fa-satellite-dish"></i> <span>Monitoreo</span>
+                </a>
+                <a th:class="${activePage == 'report' ? 'active' : ''}" th:href="@{/reports/grafic}">
+                    <i class="fas fa-chart-bar"></i> <span>Reportes</span>
+                </a>
+            </div>
         </nav>
 
         <div class="nav-system">

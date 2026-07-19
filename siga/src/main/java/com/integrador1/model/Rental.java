@@ -16,7 +16,11 @@ public class Rental {
     @DateTimeFormat(pattern = "yyyy-MM-dd") 
     private LocalDate date;
     
+    // Valor Neto(Sin IGV)
     private double totalAmount;
+
+    // Valor Brutos(Incluyendo el IGV)
+    private double brutoAmount;
 
     private String customerName; 
 
@@ -28,6 +32,9 @@ public class Rental {
     private String collectionsResponsible;
 
     private String observaciones;
+
+    @Transient
+    private Boolean facturado;
 
     @Column(nullable = true)
     private String workSheetUrl;
@@ -65,6 +72,18 @@ public class Rental {
         }
         
         return this.observaciones;
+    }
+
+        // CALCULO DEL VALOR NETO Y BRUTO
+    public void calcularMontosFinancieros(double montoIngresado, boolean isFacturado){
+        this.facturado = isFacturado;
+        if(isFacturado){
+            this.brutoAmount = montoIngresado*1.18;
+            this.totalAmount = montoIngresado;
+        }else{
+            this.brutoAmount = montoIngresado;
+            this.totalAmount = montoIngresado;
+        }
     }
 
     // --- GETTERS AND SETTERS ---
@@ -143,5 +162,22 @@ public class Rental {
         this.collectionsResponsible = collectionsResponsible;
     }
 
+    public double getBrutoAmount() {
+        return brutoAmount;
+    }
+
+    public void setBrutoAmount(double brutoAmount) {
+        this.brutoAmount = brutoAmount;
+    }
+
+    public Boolean isFacturado() {
+        return this.facturado;
+    }
+
+    public void setFacturado(Boolean facturado) {
+        this.facturado = facturado;
+    }
+
+    
     
 }

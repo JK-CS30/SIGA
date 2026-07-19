@@ -55,7 +55,8 @@
         <table class="tabla-equipos">
             <thead>
                 <tr>
-                    <th>Imagen</th>
+                    <!--
+                    <th>Imagen</th>  -->
                     <th>Código</th>
                     <th>Marca</th>
                     <th>N° Serie</th>
@@ -66,7 +67,9 @@
                 </tr>
             </thead>
             <tbody>
+                
                 <tr th:each="equipment : ${equitment}">
+                    <!--
                     <td>
                         <div th:if="${equipment.imagen != null}">
                             <img th:src="'data:image/png;base64,' + ${equipment.imagen}" alt="Equipo" width="50" height="50"/>
@@ -74,7 +77,7 @@
                         <div th:unless="${equipment.imagen != null}">
                             <i class="fas fa-laptop" style="font-size: 24px; color: #ccc;"></i>
                         </div>
-                    </td>
+                    </td>   -->
                     <td th:text="${equipment.code}"></td>
                     <td th:text="${equipment.brand}"></td>
                     <td th:text="${equipment.serialNumber}"></td>

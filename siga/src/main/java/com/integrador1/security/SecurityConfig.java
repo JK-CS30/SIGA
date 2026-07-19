@@ -44,7 +44,7 @@ public class SecurityConfig {
         http
                 // Control de accesos (Público vs Protegido)
                 .authorizeHttpRequests(auth -> auth
-                        // Únicamente lo que se puede ver sin haber iniciado sesión
+                        // 1. Recursos públicos y vistas de registro/login
                         .requestMatchers(
                                 "/login",
                                 "/signup",
@@ -58,11 +58,13 @@ public class SecurityConfig {
                                 "/h2-console/**"
                         ).permitAll()
 
-                        // OBLIGA a que el Dashboard, Rental, Maintenance, etc., requieran loguearse
+                        .requestMatchers("/monitoring/**").hasAnyRole("ADMIN", "OWNER")
+                        .requestMatchers("/reports/**", "/reports-api/**").hasAnyRole("ADMIN", "OWNER")
+
                         .anyRequest().authenticated()
                 )
 
-                // Formulario de Login configurado correctamente
+                // Formulario de Login
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -80,7 +82,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
 
+                // Deshabilitar CSRF (Permite peticiones AJAX POST del backup sin problemas de tokens)
                 .csrf(AbstractHttpConfigurer::disable)
+                
+                // Permitir H2-Console y iframes del mismo origen
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.sameOrigin())
                 );

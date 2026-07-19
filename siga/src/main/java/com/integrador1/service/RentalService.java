@@ -7,6 +7,8 @@ import com.integrador1.model.Rental;
 import com.integrador1.repository.EquipmentRepository;
 import com.integrador1.repository.RentalRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +16,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class RentalService {
 
+    private static final Logger log = LoggerFactory.getLogger(RentalService.class);
+    
     private final RentalRepository rentalRepository;
     // Inyeccion del repositorio de equipos
     private final EquipmentRepository equipmentRepository;
@@ -46,6 +53,7 @@ public class RentalService {
         return rentalRepository.findPendientes();
     }
 
+    @Transactional
     public Rental registerRental(Rental rental) {
         if (rental.getDate() == null) {
             rental.setDate(LocalDate.now());
@@ -53,14 +61,23 @@ public class RentalService {
         rental.setStatus("ACTIVO");
         rental.setTotalAmount(0.0);
 
+        String equipmentCode = "N/A";
         if (rental.getEquipment() != null && rental.getEquipment().getId() != null) {
             Equipment equipment = equipmentRepository.findById(rental.getEquipment().getId())
                     .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
-            equipment.setStatus("ALQUILADO"); // O el término que manejes: "OCUPADO", "EN_OBRA"
+            equipmentCode = equipment.getCode();
+            equipment.setStatus("ALQUILADO"); 
             equipmentRepository.save(equipment);
         }
 
-        return rentalRepository.save(rental);
+        Rental savedRental = rentalRepository.save(rental);
+        
+        // Traba de log estructurada para creación
+        log.info("[INFO] - Proceso de ALQUILER iniciado exitosamente. ID: [{}]. Equipo Asignado: [{}]. Operador responsable: [{}].", 
+                savedRental.getId(), equipmentCode, 
+                (savedRental.getOperator() != null ? savedRental.getOperator().getUsername() : "ANÓNIMO"));
+        
+        return savedRental;
     }
 
     public List<Rental> listRentals() {
@@ -81,24 +98,32 @@ public class RentalService {
         Rental rental = getRental(id);
         rental.setStatus("ELIMINADO"); // Borrado lógico corporativo
 
+        String equipmentCode = "N/A";
         if (rental.getEquipment() != null) {
             Equipment equipment = rental.getEquipment();
+            equipmentCode = equipment.getCode();
             equipment.setStatus("DISPONIBLE");
             equipmentRepository.save(equipment);
         }
 
         rentalRepository.save(rental);
+        log.warn("[WARN] - Proceso de ALQUILER ID [{}] ha sido ELIMINADO del sistema. El equipo [{}] volvió a estado DISPONIBLE.", 
+                id, equipmentCode);
     }
 
     @Transactional
-    public void closeRental(Long id, double totalAmount, String paymentMethod, String collectionsResponsible, String observaciones) {
+    public void closeRental(Long id, double totalAmount, double brutoAmount, boolean facturado, String paymentMethod, String collectionsResponsible, String observaciones) {
         Rental rental = getRental(id);
-        rental.setTotalAmount(totalAmount);
+        
+        rental.setTotalAmount(totalAmount);     // Monto Neto
+        rental.setBrutoAmount(brutoAmount);     // Monto Bruto con IGV
+        rental.setFacturado(facturado);         // Flag de factura (true/false)
         
         rental.setPaymentMethod(paymentMethod);
         rental.setCollectionsResponsible("COBRO_TERCERO".equalsIgnoreCase(paymentMethod) ? collectionsResponsible : null);
         rental.setObservaciones(observaciones);
         
+        // Manejo de estados de flujo de caja
         if ("EFECTIVO".equalsIgnoreCase(paymentMethod)) {
             rental.setStatus("FINALIZADO");
         } else if ("DEPOSITO".equalsIgnoreCase(paymentMethod)) {
@@ -107,16 +132,19 @@ public class RentalService {
             rental.setStatus("PENDIENTE_COBRO");
         }
 
-        //Liberacion del equipo
+        // Liberación del equipo asignado
         if (rental.getEquipment() != null && rental.getEquipment().getId() != null) {
             Equipment equipment = equipmentRepository.findById(rental.getEquipment().getId())
                     .orElseThrow(() -> new RuntimeException("Equipo no encontrado para liberación"));
-            
             equipment.setStatus("DISPONIBLE");
-            equipmentRepository.save(equipment); // Persistencia inmediata del estado libre
+            equipmentRepository.save(equipment); 
         }
 
         rentalRepository.save(rental);
+
+        // Log detallado de liquidación financiera
+        log.info("[INFO] - ALQUILER ID [{}] LIQUIDADO. Método de Pago: [{}]. Estado de Caja resultante: [{}]. Monto Neto: [S/. {}].", 
+                id, paymentMethod, rental.getStatus(), totalAmount);
     }
 
     @Transactional
@@ -127,7 +155,10 @@ public class RentalService {
             rental.setObservaciones(rental.getObservaciones() );
             rentalRepository.save(rental);
         }
+
+        log.info("[INFO] - PAGO CONFIRMADO: Depósito bancario verificado para el ALQUILER ID [{}]. Caja cerrada como FINALIZADO.", id);
     }
+
 
     @Transactional
     public void confirmThirdPartyCollection(Long id) {
@@ -137,6 +168,8 @@ public class RentalService {
             rental.setObservaciones(rental.getObservaciones());
             rentalRepository.save(rental);
         }
+
+        log.info("[INFO] - PAGO CONFIRMADO: Cobro por tercero validado para el ALQUILER ID [{}]. Responsable de recaudación externo liberado.", id);
     }
 
     public Rental updateRental(Long id, Rental rental) {
@@ -145,11 +178,14 @@ public class RentalService {
         existingRental.setServiceDescription(rental.getServiceDescription());
         existingRental.setEquipment(rental.getEquipment());
         existingRental.setOperator(rental.getOperator());
-
         existingRental.setTotalAmount(rental.getTotalAmount());
         existingRental.setStatus(rental.getStatus());
         existingRental.setObservaciones(rental.getObservaciones());
-        return rentalRepository.save(existingRental);
+        
+        Rental updatedRental = rentalRepository.save(existingRental);
+
+        log.info("[INFO] - Datos del ALQUILER ID [{}] modificados en el sistema por el personal de administración.", id);
+        return updatedRental;
     }
     // CALCULO SUMA TOTAL POR DIA, MES E HISTORICO 
 
@@ -210,6 +246,10 @@ public class RentalService {
             // Opcional: Ocultar operadores que tengan 0 movimientos en el rango de fechas para limpiar la vista
             .filter(dto -> dto.getTotalIniciados() > 0 || dto.getTotalFinalizados() > 0)
             .collect(Collectors.toList());
+    }
+
+    public List<Map<String, Object>> obtenerDataGraficoFinanciero() {
+        return rentalRepository.getComparativeBrutoNetoData();
     }
 
     //conteo de alquileres pendientes de deposito/cobro

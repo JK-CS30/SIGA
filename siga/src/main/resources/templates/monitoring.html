@@ -18,11 +18,13 @@
             <h1>Monitoreo Integral del Sistema</h1>
             <span>Control operativo de activos, flujo financiero del día y salud de la infraestructura</span>
         </div>
-        <div class="profile-top">
+        <div th:replace="~{fragments/layout :: header}"></div>
+    </div>
+
+    <div class="profile-top">
             <button class="btn-refresh-monitor" onclick="window.location.reload()">
                 <i class="fa-solid fa-sync-alt"></i> Actualizar Panel
             </button>
-        </div>
     </div>
 
     <!-- 1. FILA DE KPIs: FLUJO FINANCIERO Y OPERATIVO EN TIEMPO REAL -->
@@ -42,7 +44,7 @@
                 <h3>Dinero en Tránsito</h3>
                 <!-- Alquileres finalizados por operador pero estancados en PENDIENTE_COBRO -->
                 <p th:text="${'S/ ' + #numbers.formatDecimal(dineroTransito, 1, 2)}">S/ 360.30</p>
-                <span class="kpi-subtext">* Requiere acción en módulo cobros</span>
+                <span class="kpi-subtext">Requiere regularizar</span>
             </div>
         </div>
 
@@ -98,7 +100,7 @@
             <div class="fleet-status-container">
                 <div class="fleet-stat-item">
                     <span class="circle-indicator bg-success"></span>
-                    <span class="fleet-label">Disponibles para Venta:</span>
+                    <span class="fleet-label">Disponibles para Alquiler:</span>
                     <strong th:text="${equiposDisponibles}">14</strong>
                 </div>
                 <div class="fleet-stat-item">
@@ -127,12 +129,12 @@
             <h2><i class="fa-solid fa-terminal text-esmeralda"></i> Consola de Auditoría de Procesos (Logs del Servidor)</h2>
             <span class="pulse-indicator"><i class="fa-solid fa-circle"></i> Escuchando eventos...</span>
         </div>
+        
         <div class="log-terminal" id="terminalMonitor">
-            <!-- Iteración dinámica de las trazas del backend -->
             <div th:each="line : ${logsLines}" 
-                 th:text="${line}"
-                 th:classappend="${#strings.contains(line,'ERROR') || #strings.contains(line,'Exception')} ? 'log-error' : (${#strings.contains(line,'WARN')} ? 'log-warn' : 'log-info')"
-                 class="log-line">
+                th:text="${line}"
+                th:classappend="${#strings.contains(line,'ERROR') || #strings.contains(line,'Exception')} ? 'log-error' : (${#strings.contains(line,'WARN')} ? 'log-warn' : 'log-info')"
+                class="log-line">
             </div>
         </div>
     </div>
